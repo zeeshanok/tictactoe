@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tictactoe/common/logic/player.dart';
-import 'package:tictactoe/common/logic/tictactoe_board.dart';
-import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
+import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/widgets/tictactoe_game.dart';
 
 class LocalMultiplayerPage extends StatefulWidget {
   const LocalMultiplayerPage({super.key});
@@ -15,7 +15,7 @@ class LocalMultiplayerPage extends StatefulWidget {
 class _LocalMultiplayerPageState extends State<LocalMultiplayerPage> {
   StreamController<Cell>? controllerX, controllerO;
 
-  late TicTacToeBoard game;
+  late TicTacToe game;
 
   void closeControllers() {
     controllerX?.close();
@@ -28,22 +28,17 @@ class _LocalMultiplayerPageState extends State<LocalMultiplayerPage> {
     controllerX = StreamController();
     controllerO = StreamController();
 
-    game = TicTacToeBoard(
-      playerX: LocalPlayer(moveStream: controllerX!.stream),
-      playerO: LocalPlayer(moveStream: controllerO!.stream),
+    game = TicTacToe(
+      playerX: LocalPlayer(
+        moveStream: controllerX!.stream,
+        playerType: PlayerType.X,
+      ),
+      playerO: LocalPlayer(
+        moveStream: controllerO!.stream,
+        playerType: PlayerType.O,
+      ),
     );
     game.startGame();
-  }
-
-  String buildStatusText() {
-    switch (game.result) {
-      case DrawResult _:
-        return "Draw";
-      case WinResult win:
-        return "${win.player} wins";
-      default:
-        return "${playerNumConvert(game.currentPlayer)}'s turn";
-    }
   }
 
   @override
@@ -73,26 +68,13 @@ class _LocalMultiplayerPageState extends State<LocalMultiplayerPage> {
           )
         ]),
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox.square(
-                dimension: 400,
-                child: TicTacToeWidget(
-                  cells: game.cells,
-                  onPlay: (cell) => setState(() {
-                    (game.currentPlayer == PlayerType.X
-                            ? controllerX
-                            : controllerO)
-                        ?.sink
-                        .add(cell);
-                  }),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(buildStatusText())
-            ],
-          ),
-        ));
+            child: TicTacToeGame(
+          game: game,
+          onPlay: (cell) => (game.currentPlayerType == PlayerType.X
+                  ? controllerX
+                  : controllerO)
+              ?.sink
+              .add(cell),
+        )));
   }
 }

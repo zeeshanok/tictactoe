@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tictactoe/common/logic/player.dart';
-import 'package:tictactoe/common/logic/tictactoe_board.dart';
+import 'package:tictactoe/common/logic/tictactoe.dart';
 
-class TicTacToeWidget extends StatelessWidget {
-  const TicTacToeWidget({
+class TicTacToeBoard extends StatelessWidget {
+  const TicTacToeBoard({
     super.key,
     required this.cells,
     required this.onPlay,
   });
 
   final CellList cells;
-  final void Function(Cell cell) onPlay;
+  final void Function(Cell cell)? onPlay;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +25,8 @@ class TicTacToeWidget extends StatelessWidget {
                 for (int i = 0; i < 3; i++)
                   TicTacToeCell(
                     size: constraints.biggest.shortestSide / 3,
-                    cell: Cell.fromCoord(i, j),
-                    text: playerNumConvert(
-                      cells[Cell.fromCoord(i, j).index],
-                    ),
-                    onPressed: () => onPlay(Cell.fromCoord(i, j)),
+                    playerType: cells[Cell.fromCoord(i, j).index],
+                    onPressed: () => onPlay?.call(Cell.fromCoord(i, j)),
                   ),
               ],
             )
@@ -40,16 +37,27 @@ class TicTacToeWidget extends StatelessWidget {
 }
 
 class TicTacToeCell extends StatelessWidget {
-  TicTacToeCell({
-    required this.text,
+  const TicTacToeCell({
+    super.key,
+    required this.playerType,
     required this.size,
     required this.onPressed,
-    required Cell cell, // this is for use as a key
-  }) : super(key: ValueKey("$cell$text"));
+  });
 
   final double size;
-  final String text;
+  final PlayerType? playerType;
   final void Function() onPressed;
+
+  Color getBackgroundColor() {
+    switch (playerType) {
+      case null:
+        return Colors.grey.shade600;
+      case PlayerType.X:
+        return Colors.red.shade300;
+      case PlayerType.O:
+        return Colors.blue.shade300;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +71,12 @@ class TicTacToeCell extends StatelessWidget {
             fixedSize: Size.square(size),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             textStyle:
-                const TextStyle(fontSize: 50, fontWeight: FontWeight.w600),
+                const TextStyle(fontSize: 80, fontWeight: FontWeight.w600),
+            backgroundColor: getBackgroundColor().withOpacity(0.7),
+            foregroundColor: Colors.white70,
           ),
-          child: Text(text),
+          child: Text(playerTypeToString(playerType)),
         ),
       ),
     );

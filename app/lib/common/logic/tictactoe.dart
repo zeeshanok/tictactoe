@@ -3,29 +3,36 @@ import 'package:tictactoe/common/logic/player.dart';
 
 typedef CellList = List<PlayerType?>;
 
-class TicTacToeBoard extends ChangeNotifier {
+int getMoveCount(CellList cells) => cells.where((c) => c != null).length;
+
+PlayerType getCurrentPlayerType(cells) =>
+    getMoveCount(cells) % 2 == 0 ? PlayerType.X : PlayerType.O;
+
+class TicTacToe extends ChangeNotifier {
   final CellList cells;
 
   final List<Cell> moves;
 
-  final Player playerX;
-
-  final Player playerO;
+  final Player playerX, playerO;
 
   /// Result of the game. If null the game is still ongoing.
   GameResult? result;
 
   int get moveCount => moves.length;
 
-  TicTacToeBoard({
+  PlayerType get currentPlayerType => getCurrentPlayerType(cells);
+  Player get currentPlayer =>
+      currentPlayerType == PlayerType.X ? playerX : playerO;
+
+  TicTacToe({
     required this.playerX,
     required this.playerO,
   })  : cells = List.filled(9, null),
         moves = [];
 
-  factory TicTacToeBoard.fromNotation(String notation,
+  factory TicTacToe.fromNotation(String notation,
       {required Player playerX, required Player playerO}) {
-    final board = TicTacToeBoard(playerX: playerX, playerO: playerO);
+    final board = TicTacToe(playerX: playerX, playerO: playerO);
     final cells = Cell.cellListfromNotation(notation);
     for (final cell in cells) {
       try {
@@ -37,9 +44,6 @@ class TicTacToeBoard extends ChangeNotifier {
     return board;
   }
 
-  PlayerType get currentPlayer =>
-      moveCount % 2 == 0 ? PlayerType.X : PlayerType.O;
-
   void _play(Cell cell) {
     if (result != null) return;
     final index = cell.index;
@@ -48,7 +52,7 @@ class TicTacToeBoard extends ChangeNotifier {
       throw FilledCellException(cell.toString());
     }
 
-    cells[index] = currentPlayer;
+    cells[index] = currentPlayerType;
     moves.add(cell);
     notifyListeners();
   }
@@ -62,17 +66,24 @@ class TicTacToeBoard extends ChangeNotifier {
     return result;
   }
 
-  void startGame() async {
+  Future<void> startGame() async {
     while (getResult() == null) {
-      _play(await (currentPlayer == PlayerType.X ? playerX : playerO)
-          .getMove(this));
+      final move = await (currentPlayerType == PlayerType.X ? playerX : playerO)
+          .getMove(this);
+      // the wait was cancelled (usually because the user ended the game)
+      if (move == null) {
+        break;
+      }
+      _play(move);
+      notifyListeners();
     }
   }
 }
 
+/// Returns null if the game is still ongoing otherwise returns the result
 GameResult? getResultFromCells(CellList cells) {
-  final moveCount = cells.where((c) => c != null).length;
-  if (moveCount < 5) return null;
+  final moveCount = getMoveCount(cells);
+  if (moveCount < 3) return null;
 
   // vertical ( | )
   for (final i in [0, 1, 2]) {
@@ -135,6 +146,9 @@ class Cell {
         y = int.parse(cell[1]);
 
   Cell.fromCoord(this.x, this.y);
+  Cell.fromIndex(int index)
+      : x = index % 3,
+        y = index ~/ 3;
 
   int get index => y * 3 + x;
 
@@ -166,7 +180,7 @@ class WinResult implements GameResult {
   final PlayerType playerType;
 
   WinResult({required this.playerType});
-  String get player => playerNumConvert(playerType);
+  String get player => playerTypeToString(playerType);
 }
 
 class DrawResult implements GameResult {}

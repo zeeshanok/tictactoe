@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/pages/game_select/game_select.dart';
 import 'package:tictactoe/pages/local_multiplayer/local_multiplayer.dart';
+import 'package:tictactoe/pages/singleplayer/singleplayer.dart';
 
 void main() {
   runApp(const App());
@@ -17,6 +18,10 @@ final _router = GoRouter(routes: [
       builder: (context, state) => const GameSelectPage(),
       routes: [
         GoRoute(
+          path: 'singleplayer',
+          builder: (context, state) => const SinglePlayerPage(),
+        ),
+        GoRoute(
           path: 'local-multiplayer',
           builder: (context, state) => const LocalMultiplayerPage(),
         ),
@@ -30,6 +35,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _router,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,

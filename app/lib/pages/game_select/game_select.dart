@@ -12,6 +12,11 @@ class GameSelectPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           OutlinedButton(
+            onPressed: () => context.go('/singleplayer'),
+            child: const Text("Play with the computer"),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton(
             onPressed: () => context.go('/local-multiplayer'),
             child: const Text("Play locally with your friend"),
           )
