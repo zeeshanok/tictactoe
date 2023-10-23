@@ -141,11 +141,14 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
 /// `AuthService` that uses Google One-Tap sign in on android
 /// and Google's silent sign in on web.
 class AndroidWebAuthService extends ChangeNotifier implements AuthService {
+  late LocalPreferences _prefs;
   @override
   bool get isAuthed => _isAuthed;
   void _setIsAuthed(bool val) {
-    debugPrint("auth state set to $val");
     _isAuthed = val;
+    if (_isAuthed) {
+      _dio.options.headers['authorization'] = "Bearer ${_prefs.sessionToken}";
+    }
     notifyListeners();
   }
 
@@ -168,6 +171,7 @@ class AndroidWebAuthService extends ChangeNotifier implements AuthService {
 
   @override
   Future<void> start() async {
+    _prefs = GetIt.instance<LocalPreferences>();
     if (await _attemptSessionLogin()) {
       _setIsAuthed(true);
     } else {
@@ -205,14 +209,18 @@ class AndroidWebAuthService extends ChangeNotifier implements AuthService {
     debugPrint(response.data.toString());
     if (response.statusCode == 200) {
       final token = response.data!['sessionToken'] as String;
-      GetIt.instance<LocalPreferences>().setSessionToken(token);
+      _prefs.setSessionToken(token);
       return token;
     }
     return null;
   }
 
   @override
-  Future<void> signOut() {
-    throw UnimplementedError();
+  Future<void> signOut() async {
+    final res = await _dio.delete('/auth');
+    if (res.statusCode == 200) {
+      await _prefs.setSessionToken(null);
+      _setIsAuthed(false);
+    }
   }
 }

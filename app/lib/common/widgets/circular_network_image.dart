@@ -14,8 +14,9 @@ class CircularNetworkImage extends StatelessWidget {
       useOldImageOnUrlChange: true,
       errorWidget: (_, __, ___) => CircleAvatar(
         radius: radius,
-        child: const Icon(Icons.warning_rounded),
+        child: const Icon(Icons.warning_rounded, size: 20),
       ),
+      errorListener: (value) => debugPrint(value.toString()),
       placeholder: (context, url) => CircleAvatar(
         radius: radius,
         child: const Icon(Icons.person_rounded),
