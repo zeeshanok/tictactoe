@@ -18,6 +18,7 @@ class GameSelectPage extends StatelessWidget {
           IconButton(
             onPressed: () async => authService.signOut(),
             icon: const Icon(Icons.logout_rounded),
+            tooltip: 'Sign out',
           )
         ],
       ),

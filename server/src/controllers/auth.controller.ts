@@ -85,7 +85,8 @@ controller
     .delete('/', async (req: Request, res: Response) => {
         const sessionToken = getSessionToken(req);
         if (sessionToken) {
-            await useTypeOrm(Session).delete({ sessionToken });
+            await useTypeOrm(Session).delete({ sessionToken, ip: req.ip as string });
+            res.sendStatus(200);
         } else {
             res.sendStatus(404);
         }

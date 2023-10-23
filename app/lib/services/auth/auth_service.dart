@@ -73,10 +73,15 @@ abstract class AuthService extends ChangeNotifier {
 /// `AuthService` that launches an OAuth window on the users default browser
 /// to authenticate with the server.
 class WindowsAuthService extends ChangeNotifier implements AuthService {
+  late LocalPreferences _prefs;
+
   @override
   bool get isAuthed => _isAuthed;
   void _setIsAuthed(bool val) {
     _isAuthed = val;
+    if (_isAuthed) {
+      _dio.options.headers['authorization'] = "Bearer ${_prefs.sessionToken}";
+    }
     notifyListeners();
   }
 
@@ -97,6 +102,7 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
 
   @override
   Future<void> start() async {
+    _prefs = GetIt.instance<LocalPreferences>();
     if (await _attemptSessionLogin()) {
       _setIsAuthed(true);
     }
@@ -114,7 +120,7 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
     final sessionToken = await SessionTokenReceiver.receive();
 
     if (sessionToken != null) {
-      await GetIt.instance<LocalPreferences>().setSessionToken(sessionToken);
+      await _prefs.setSessionToken(sessionToken);
       _setIsAuthed(true);
       return true;
     }
@@ -123,8 +129,12 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
   }
 
   @override
-  Future<void> signOut() {
-    throw UnimplementedError();
+  Future<void> signOut() async {
+    final res = await _dio.delete('/auth');
+    if (res.statusCode == 200) {
+      await _prefs.setSessionToken(null);
+      _setIsAuthed(false);
+    }
   }
 }
 
