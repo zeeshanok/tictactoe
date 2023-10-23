@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:tictactoe/common/transitions.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/create_user/create_user.dart';
@@ -79,15 +80,17 @@ GoRouter getRouter() {
       ),
       GoRoute(
         path: '/game',
-        builder: (context, state) => const GameSelectPage(),
+        pageBuilder: (context, state) =>
+            getDefaultTransition(state, const GameSelectPage()),
         routes: [
           GoRoute(
-            path: 'singleplayer',
-            builder: (context, state) => const SinglePlayerPage(),
-          ),
+              path: 'singleplayer',
+              pageBuilder: (context, state) =>
+                  getDefaultTransition(state, const SinglePlayerPage())),
           GoRoute(
             path: 'local-multiplayer',
-            builder: (context, state) => const LocalMultiplayerPage(),
+            pageBuilder: (context, state) =>
+                getDefaultTransition(state, const SinglePlayerPage()),
           ),
         ],
       ),
@@ -100,7 +103,7 @@ GoRouter getRouter() {
 }
 
 ThemeData buildTheme(Brightness brightness) {
-  final borderRadius = BorderRadius.circular(5);
+  final borderRadius = BorderRadius.circular(8);
   final scheme =
       ColorScheme.fromSeed(seedColor: Colors.purple, brightness: brightness);
   return ThemeData.from(colorScheme: scheme, useMaterial3: true).copyWith(
@@ -114,7 +117,7 @@ ThemeData buildTheme(Brightness brightness) {
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
