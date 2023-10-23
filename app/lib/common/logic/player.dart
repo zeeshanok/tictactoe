@@ -6,24 +6,13 @@ import 'package:tictactoe/common/logic/tictactoe.dart';
 
 enum PlayerType { O, X }
 
-PlayerType flipPlayerType(PlayerType p) {
-  return PlayerType.values[1 - (p.index)];
-}
-
-/// Convert player number to text
-String playerTypeToString(PlayerType? playerType) {
-  switch (playerType) {
-    case PlayerType.X:
-      return "X";
-    case PlayerType.O:
-      return "O";
-    default:
-      return "";
-  }
+extension PlayerTypeUtils on PlayerType {
+  PlayerType get flipped => PlayerType.values[1 - (index)];
 }
 
 abstract class Player {
   String get displayName;
+  String get internalName;
 
   /// Get player's next move given the current state of the board
   Future<Cell?> getMove(TicTacToe board);
@@ -33,15 +22,21 @@ class LocalPlayer implements Player {
   /// Stream of moves that the local player plays.
   /// Moves should be added to this stream from the UI.
   final Stream<Cell> _moveStream;
-
-  final String _displayName;
   @override
   String get displayName => _displayName;
+  final String _displayName;
 
-  LocalPlayer(
-      {required Stream<Cell> moveStream, required PlayerType playerType})
-      : _moveStream = moveStream.asBroadcastStream(),
-        _displayName = playerTypeToString(playerType);
+  @override
+  String get internalName => _internalName;
+  final String _internalName;
+
+  LocalPlayer({
+    required Stream<Cell> moveStream,
+    required PlayerType playerType,
+    required String internalName,
+  })  : _moveStream = moveStream.asBroadcastStream(),
+        _displayName = playerType.name,
+        _internalName = internalName;
 
   @override
   Future<Cell?> getMove(TicTacToe board) async {
@@ -58,9 +53,12 @@ class MiniMaxComputerPlayer implements Player {
   final PlayerType playerType;
 
   @override
-  String get displayName => "Computer (${playerTypeToString(playerType)})";
+  String get displayName => "Computer (${playerType.name})";
 
-  MiniMaxComputerPlayer({required this.playerType});
+  @override
+  final String internalName;
+
+  MiniMaxComputerPlayer({required this.playerType}) : internalName = 'Computer';
 
   (int action, int value) minimax({
     required CellList state,

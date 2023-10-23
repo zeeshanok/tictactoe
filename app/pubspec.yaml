@@ -37,6 +37,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   go_router: ^11.1.4
   async: ^2.11.0
+  get_it: ^7.6.4
+  google_sign_in: ^6.1.5
+  shared_preferences: ^2.2.2
+  dio: ^5.3.3
+  url_launcher: ^6.1.14
+  cached_network_image: ^3.3.0
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

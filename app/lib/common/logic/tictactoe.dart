@@ -8,12 +8,37 @@ int getMoveCount(CellList cells) => cells.where((c) => c != null).length;
 PlayerType getCurrentPlayerType(cells) =>
     getMoveCount(cells) % 2 == 0 ? PlayerType.X : PlayerType.O;
 
+enum GameType {
+  computer,
+  localMultiplayer,
+  online,
+}
+
+extension GameTypeString on GameType {
+  String get name => switch (this) {
+        GameType.computer => 'computer',
+        GameType.localMultiplayer => 'local-multiplayer',
+        GameType.online => 'online',
+      };
+
+  static GameType fromName(String name) => switch (name) {
+        'computer' => GameType.computer,
+        'local-multiplayer' => GameType.localMultiplayer,
+        'online' => GameType.online,
+        _ => throw Exception("Unknown gametype")
+      };
+}
+
 class TicTacToe extends ChangeNotifier {
   final CellList cells;
 
   final List<Cell> moves;
 
   final Player playerX, playerO;
+
+  final void Function(TicTacToe game)? onGameEnd;
+
+  final Stopwatch stopwatch;
 
   /// Result of the game. If null the game is still ongoing.
   GameResult? result;
@@ -24,15 +49,24 @@ class TicTacToe extends ChangeNotifier {
   Player get currentPlayer =>
       currentPlayerType == PlayerType.X ? playerX : playerO;
 
+  final GameType _gameType;
+
   TicTacToe({
+    this.onGameEnd,
     required this.playerX,
     required this.playerO,
+    required GameType gameType,
   })  : cells = List.filled(9, null),
-        moves = [];
+        moves = [],
+        stopwatch = Stopwatch(),
+        _gameType = gameType;
 
   factory TicTacToe.fromNotation(String notation,
-      {required Player playerX, required Player playerO}) {
-    final board = TicTacToe(playerX: playerX, playerO: playerO);
+      {required Player playerX,
+      required Player playerO,
+      required GameType gameType}) {
+    final board =
+        TicTacToe(playerX: playerX, playerO: playerO, gameType: gameType);
     final cells = Cell.cellListfromNotation(notation);
     for (final cell in cells) {
       try {
@@ -67,6 +101,7 @@ class TicTacToe extends ChangeNotifier {
   }
 
   Future<void> startGame() async {
+    stopwatch.start();
     while (getResult() == null) {
       final move = await (currentPlayerType == PlayerType.X ? playerX : playerO)
           .getMove(this);
@@ -77,7 +112,17 @@ class TicTacToe extends ChangeNotifier {
       _play(move);
       notifyListeners();
     }
+    stopwatch.stop();
+    onGameEnd?.call(this);
   }
+
+  Map<String, dynamic> toMap() => {
+        "moves": Cell.notationFromCellList(moves),
+        "type": _gameType.name,
+        "playerX": playerX.internalName,
+        "playerO": playerO.internalName,
+        "timePlayed": stopwatch.elapsed.inSeconds,
+      };
 }
 
 /// Returns null if the game is still ongoing otherwise returns the result
@@ -180,7 +225,7 @@ class WinResult implements GameResult {
   final PlayerType playerType;
 
   WinResult({required this.playerType});
-  String get player => playerTypeToString(playerType);
+  String get player => playerType.name;
 }
 
 class DrawResult implements GameResult {}

@@ -2,34 +2,16 @@ import express, { NextFunction, Request, Response, Router } from "express";
 import { useTypeOrm } from "../database/typeorm";
 import { User } from "../database/entities/user.entity";
 import { getSessionToken } from "../utils";
-import { Session } from "../database/entities/session.entity";
-import { getGoogleUserInfo } from "./common";
+import { getGoogleUserInfo, getSessionFromToken, getUserById, getUserFromToken } from "./common";
 
-const getSessionFromToken = async (req: Request) => {
-    const session: Session | null = await useTypeOrm(Session).findOne({
-        relations: {
-            user: true
-        },
-        where: {
-            sessionToken: getSessionToken(req)!,
-            ip: req.ip,
-        }
-    });
-    return session;
-}
-
-const getUserFromToken = async (req: Request) => {
-    return (await getSessionFromToken(req))?.user;
-}
-
-const updateProfileUrl = async (userId: number) => {
+/**
+ * Update profile url of a given user
+ * @param userId id of the user who's profile url to update
+ */
+async function updateProfileUrl(userId: number) {
     const { picture } = await getGoogleUserInfo(userId);
     if (picture) {
-        const partial: Partial<User> = {
-            id: userId,
-            profileUrl: picture,
-        };
-        await useTypeOrm(User).save(partial);
+        await useTypeOrm(User).update({ id: userId }, { profileUrl: picture });
     }
 }
 
@@ -39,6 +21,7 @@ const controller = Router();
 controller
     .use((req: Request, res: Response, next: NextFunction) => {
         if (!getSessionToken(req)) {
+            console.log(`received request without session token (${req.path}), blocking...`);
             res.status(400);
             res.send('provide a session token to access this path');
             return;
@@ -48,7 +31,6 @@ controller
     .use(express.json())
     .get('/me', async (req: Request, res: Response) => {
         const session = await getSessionFromToken(req);
-
         if (!session) res.sendStatus(404);
         await updateProfileUrl(session!.user.id);
 
@@ -56,28 +38,39 @@ controller
     })
     .patch('/me', async (req: Request, res: Response) => {
         if (!req.body) {
-            res.sendStatus(400);
+            res.status(400);
+            res.send('provide parameters to edit user');
             return;
         }
         const currentUser = await getUserFromToken(req);
-        const newUser: Partial<User> = { ...req.body, id: currentUser?.id };
+        const edit: Partial<User> = { ...req.body };
+        if (edit.username !== undefined && (edit.username === null || edit.username === '')) {
+            res.status(400);
+            res.send('Username cannot be empty or null');
+        }
 
-        const user = await useTypeOrm(User).save(newUser);
-        await updateProfileUrl(user.id);
+
+        await useTypeOrm(User).update({ id: currentUser!.id }, edit);
+        const user = await getUserById(currentUser!.id);
         res.send(user);
     })
-    .get('/:id', async (req: Request, res: Response) => {
+    .get('/:id(\\d+)', async (req: Request, res: Response) => {
         const id = Number.parseInt(req.params.id);
-        if (Number.isNaN(id)) {
-            res.sendStatus(400);
-            return;
-        }
         await updateProfileUrl(id);
-        const user = await useTypeOrm(User).findOneBy({ id });
+        const user = await getUserById(id);
         if (!user) {
             res.sendStatus(404);
         } else {
             res.send(user);
+        }
+    })
+    .get('/exists', async (req: Request, res: Response) => {
+        const username = req.query.username as (string | undefined);
+        if (!username) {
+            res.sendStatus(404);
+        } else {
+            const user = await useTypeOrm(User).findOneBy({ username });
+            res.send({ exists: Boolean(user) });
         }
     });
 

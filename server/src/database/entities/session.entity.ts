@@ -1,21 +1,17 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import ISession from "../model/session.model";
 import { User } from "./user.entity";
 
 @Entity()
-export class Session implements ISession {
+export class Session {
 
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    refreshToken!: string;
+    @Column({ nullable: true})
+    refreshToken?: string;
 
     @Column()
     accessToken!: string;
-
-    @Column()
-    expiryTime!: number;
 
     @Column({ unique: true })
     sessionToken!: string;
@@ -23,7 +19,7 @@ export class Session implements ISession {
     @Column()
     ip!: string;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn()
     user!: User;
 }

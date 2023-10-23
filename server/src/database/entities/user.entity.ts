@@ -1,22 +1,20 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import IUser from '../model/user.model';
 
 @Entity()
-export class User implements IUser {
+export class User {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({unique: true})
+    @Column({ unique: true })
     email!: string;
 
-    @Column({nullable: true, unique: true})
+    @Column({ nullable: true, unique: true })
     username!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     bio!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     profileUrl!: string;
 
-    
 }

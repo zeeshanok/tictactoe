@@ -6,7 +6,7 @@ export default async function typeOrmConnect(): Promise<void> {
     const source = new DataSource({
         type: 'sqlite',
         database: 'db.sqlite',
-        entities: [`${__dirname}/entities/*.entity.ts`],
+        entities: [`${__dirname}/entities/*.entity.[jt]s`, ],
         synchronize: true,
     });
     ormDb = await source.initialize();

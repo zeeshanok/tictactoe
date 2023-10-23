@@ -76,7 +76,7 @@ class TicTacToeCell extends StatelessWidget {
             backgroundColor: getBackgroundColor().withOpacity(0.7),
             foregroundColor: Colors.white70,
           ),
-          child: Text(playerTypeToString(playerType)),
+          child: Text(playerType?.name ?? ""),
         ),
       ),
     );
