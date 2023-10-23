@@ -100,14 +100,21 @@ GoRouter getRouter() {
 }
 
 ThemeData buildTheme(Brightness brightness) {
+  final borderRadius = BorderRadius.circular(5);
   final scheme =
-      ColorScheme.fromSeed(seedColor: Colors.green, brightness: brightness);
+      ColorScheme.fromSeed(seedColor: Colors.purple, brightness: brightness);
   return ThemeData.from(colorScheme: scheme, useMaterial3: true).copyWith(
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: borderRadius,
         ),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -117,16 +124,20 @@ ThemeData buildTheme(Brightness brightness) {
       floatingLabelBehavior: FloatingLabelBehavior.never,
       fillColor: scheme.outline.withOpacity(0.1),
       focusColor: scheme.outline.withOpacity(0.1),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.transparent),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: const BorderSide(color: Colors.transparent),
       ),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.transparent),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: const BorderSide(color: Colors.transparent),
       ),
-      focusedErrorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.transparent),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: const BorderSide(color: Colors.transparent),
       ),
       errorBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
         borderSide: BorderSide(
           color: scheme.error,
         ),
