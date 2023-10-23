@@ -90,7 +90,7 @@ GoRouter getRouter() {
           GoRoute(
             path: 'local-multiplayer',
             pageBuilder: (context, state) =>
-                getDefaultTransition(state, const SinglePlayerPage()),
+                getDefaultTransition(state, const LocalMultiplayerPage()),
           ),
         ],
       ),
