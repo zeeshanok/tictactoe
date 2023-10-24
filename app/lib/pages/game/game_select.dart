@@ -1,44 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
-import 'package:tictactoe/services/auth/auth_service.dart';
-import 'package:tictactoe/common/widgets/user_widget.dart';
 
 class GameSelectPage extends StatelessWidget {
   const GameSelectPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authService = context.read<AuthService>();
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          const UserWidget(),
-          IconButton(
-            onPressed: () async => authService.signOut(),
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Sign out',
-          )
-        ],
-      ),
-      body: Center(
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: Center(
           child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           GameTypeWidget(
             gameType: GameType.computer,
-            onPressed: () => context.go('/game/singleplayer'),
+            onPressed: () => context.go('/play/singleplayer'),
           ),
           const SizedBox(width: 14),
           GameTypeWidget(
             gameType: GameType.localMultiplayer,
-            onPressed: () => context.go('/game/local-multiplayer'),
+            onPressed: () => context.go('/play/local-multiplayer'),
           ),
           const SizedBox(width: 14),
           GameTypeWidget(
             gameType: GameType.online,
-            onPressed: () => context.go('/game/multiplayer'),
+            onPressed: () => context.go('/play/multiplayer'),
           )
         ],
       )),
@@ -69,7 +56,10 @@ class GameTypeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
         onPressed: onPressed,
-        style: OutlinedButton.styleFrom(minimumSize: const Size(200, 0)),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(200, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

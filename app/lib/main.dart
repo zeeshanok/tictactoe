@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/common/transitions.dart';
+import 'package:tictactoe/pages/game/game_history.dart';
+import 'package:tictactoe/pages/game/game_scaffold_with_nav.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/create_user/create_user.dart';
@@ -45,7 +47,10 @@ void main() async {
 }
 
 GoRouter getRouter() {
+  final rootNavKey = GlobalKey<NavigatorState>();
+  final gamesNavKey = GlobalKey<NavigatorState>();
   return GoRouter(
+    navigatorKey: rootNavKey,
     refreshListenable: CombineChangeNotifiers([
       GetIt.instance<UserService>(),
       GetIt.instance<AuthService>(),
@@ -55,8 +60,6 @@ GoRouter getRouter() {
       final auth = GetIt.instance<AuthService>();
       final currentUser = GetIt.instance<UserService>().currentUser;
 
-      debugPrint(state.matchedLocation);
-
       if (!auth.isInitialised) return '/loading';
       if (!auth.isAuthed) return '/authenticate';
       if (currentUser != null && currentUser.username == null) {
@@ -64,11 +67,11 @@ GoRouter getRouter() {
       }
       if ({"/authenticate", "/loading", '/create-user'}
           .contains(state.matchedLocation)) {
-        return '/game';
+        return '/';
       }
       return null;
     },
-    initialLocation: '/game',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/authenticate',
@@ -78,19 +81,40 @@ GoRouter getRouter() {
         path: '/loading',
         builder: (context, state) => const LoadingPage(),
       ),
-      GoRoute(
-        path: '/game',
-        pageBuilder: (context, state) =>
-            getDefaultTransition(state, const GameSelectPage()),
+      ShellRoute(
+        navigatorKey: gamesNavKey,
+        pageBuilder: (context, state, child) => slideLeftTransition(
+          state,
+          HomeScaffoldWithNav(state: state, child: child),
+        ),
         routes: [
           GoRoute(
-              path: 'singleplayer',
-              pageBuilder: (context, state) =>
-                  getDefaultTransition(state, const SinglePlayerPage())),
-          GoRoute(
-            path: 'local-multiplayer',
+            path: '/history',
+            parentNavigatorKey: gamesNavKey,
             pageBuilder: (context, state) =>
-                getDefaultTransition(state, const LocalMultiplayerPage()),
+                slideUpTransition(state, const GameHistoryPage()),
+          ),
+          GoRoute(
+            path: '/',
+            parentNavigatorKey: gamesNavKey,
+            pageBuilder: (context, state) =>
+                slideUpTransition(state, const GameSelectPage()),
+            routes: [
+              GoRoute(
+                path: 'play/singleplayer',
+                parentNavigatorKey: rootNavKey,
+                pageBuilder: (context, state) =>
+                    slideLeftTransition(state, const SinglePlayerPage()),
+              ),
+              GoRoute(
+                path: 'play/local-multiplayer',
+                parentNavigatorKey: rootNavKey,
+                pageBuilder: (context, state) => slideLeftTransition(
+                  state,
+                  const LocalMultiplayerPage(),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -105,7 +129,7 @@ GoRouter getRouter() {
 ThemeData buildTheme(Brightness brightness) {
   final borderRadius = BorderRadius.circular(8);
   final scheme =
-      ColorScheme.fromSeed(seedColor: Colors.purple, brightness: brightness);
+      ColorScheme.fromSeed(seedColor: Colors.pink, brightness: brightness);
   return ThemeData.from(colorScheme: scheme, useMaterial3: true).copyWith(
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
@@ -118,6 +142,13 @@ ThemeData buildTheme(Brightness brightness) {
           borderRadius: borderRadius,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius,
+        ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

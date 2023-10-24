@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-CustomTransitionPage<void> getDefaultTransition(
+CustomTransitionPage<void> slideLeftTransition(
         GoRouterState state, Widget child) =>
+    slideOffsetTransition(
+      state: state,
+      child: child,
+      begin: const Offset(0.04, 0),
+      end: Offset.zero,
+    );
+
+CustomTransitionPage<void> slideUpTransition(
+        GoRouterState state, Widget child) =>
+    slideOffsetTransition(
+      state: state,
+      child: child,
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    );
+
+CustomTransitionPage<void> slideOffsetTransition({
+  required GoRouterState state,
+  required Widget child,
+  required Offset begin,
+  required Offset end,
+}) =>
     CustomTransitionPage<void>(
       key: state.pageKey,
       child: child,
@@ -17,8 +39,8 @@ CustomTransitionPage<void> getDefaultTransition(
         ),
         child: SlideTransition(
           position: Tween(
-            begin: const Offset(1, 0),
-            end: const Offset(0, 0),
+            begin: begin,
+            end: end,
           ).animate(
             CurvedAnimation(
               parent: animation,

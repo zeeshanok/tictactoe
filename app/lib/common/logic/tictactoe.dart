@@ -102,20 +102,20 @@ class TicTacToe extends ChangeNotifier {
 
   Future<void> startGame() async {
     stopwatch.start();
-    bool _prematureEnd = false;
+    bool prematureEnd = false;
     while (getResult() == null) {
       final move = await (currentPlayerType == PlayerType.X ? playerX : playerO)
           .getMove(this);
       // the wait was cancelled (usually because the user ended the game)
       if (move == null) {
-        _prematureEnd = true;
+        prematureEnd = true;
         break;
       }
       _play(move);
       notifyListeners();
     }
     stopwatch.stop();
-    if (!_prematureEnd) onGameEnd?.call(this);
+    if (!prematureEnd) onGameEnd?.call(this);
   }
 
   Map<String, dynamic> toMap() => {

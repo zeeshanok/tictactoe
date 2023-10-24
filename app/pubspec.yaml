@@ -44,6 +44,7 @@ dependencies:
   url_launcher: ^6.1.14
   cached_network_image: ^3.3.0
   provider: ^6.0.5
+  flutter_animate: ^4.2.0+1
 
 dev_dependencies:
   flutter_test:
