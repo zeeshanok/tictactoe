@@ -92,12 +92,6 @@ GoRouter getRouter() {
         ),
         routes: [
           GoRoute(
-            path: '/history',
-            parentNavigatorKey: gamesNavKey,
-            pageBuilder: (context, state) =>
-                slideUpTransition(state, const GameHistoryPage()),
-          ),
-          GoRoute(
             path: '/',
             parentNavigatorKey: gamesNavKey,
             pageBuilder: (context, state) =>
@@ -118,6 +112,12 @@ GoRouter getRouter() {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: '/history',
+            parentNavigatorKey: gamesNavKey,
+            pageBuilder: (context, state) =>
+                slideUpTransition(state, const GameHistoryPage()),
           ),
         ],
       ),

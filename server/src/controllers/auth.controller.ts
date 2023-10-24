@@ -70,6 +70,13 @@ controller
 
         if (session) {
             const client = getOAuthClient();
+            try {
+                // checking if token is expired
+                await client.getTokenInfo(session.accessToken);
+            } catch {
+                res.sendStatus(401);
+                return;
+            }
             client.setCredentials({
                 access_token: session.accessToken,
                 refresh_token: session.refreshToken,

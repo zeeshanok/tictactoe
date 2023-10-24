@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
+import 'package:tictactoe/common/widgets/user_widget.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 
@@ -42,16 +43,12 @@ class HomeScaffoldWithNav extends StatelessWidget {
   Widget buildMobileLayout(BuildContext context) => Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          title: const Text('TicTacToe'),
+          centerTitle: true,
           backgroundColor:
               Theme.of(context).colorScheme.background.withOpacity(0.9),
           surfaceTintColor: Colors.transparent,
-          actions: [
-            IconButton(
-              onPressed: () async =>
-                  await context.read<AuthService>().signOut(),
-              icon: const Icon(Icons.logout_rounded),
-            )
-          ],
+          actions: const [UserWidget(viewMode: UserViewMode.imageOnly)],
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const [
