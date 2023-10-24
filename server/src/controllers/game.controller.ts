@@ -10,17 +10,22 @@ controller
     .use(requireSessionToken())
     .use(express.json())
     .get('/', async (req: Request, res: Response) => {
-        const user = await getUserFromToken(req);
-
+        const parsedId = Number.parseInt(req.query.userId as string);
+        const id = Number.isNaN(parsedId) ? (await getUserFromToken(req))?.id : parsedId;
+        if (id === undefined) {
+            res.sendStatus(401);
+            return;
+        }
         const games = await useTypeOrm(Game).find({
             where: [
-                { playerO: user!.id.toString() },
+                { playerO: id.toString() },
                 // or
-                { playerX: user!.id.toString() },
-            ]
+                { playerX: id.toString() },
+            ],
+            order: { createdAt: 'DESC' }
         });
 
-        res.send(games);
+        res.send({ games });
     })
     .get('/:id(\\d+)', async (req: Request, res: Response) => {
         const game = await useTypeOrm(Game).findOneBy({ id: Number.parseInt(req.params.id) });

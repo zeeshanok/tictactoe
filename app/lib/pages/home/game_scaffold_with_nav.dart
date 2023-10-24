@@ -20,23 +20,23 @@ class HomeScaffoldWithNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: SizedBox(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SizedBox(
               width: 200,
               child: NavRail(selectedPath: state.fullPath!),
             ),
-          ),
-          const VerticalDivider(width: 1, indent: 8, endIndent: 8),
-          Expanded(
-            child: Container(
-              child: child,
-            ),
-          )
-        ],
+            const VerticalDivider(width: 16),
+            Expanded(
+              child: Container(
+                child: child,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -21,7 +21,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
   TicTacToe? game;
 
   void createGame(PlayerType localPlayer) {
-    final id = GetIt.instance<UserService>().currentUser!.id!;
+    final id = GetIt.instance<UserService>().currentUser!.id;
 
     controller = StreamController();
     final isX = localPlayer == PlayerType.X;

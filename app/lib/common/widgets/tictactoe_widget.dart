@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/utils.dart';
 
 class TicTacToeBoard extends StatelessWidget {
   const TicTacToeBoard({
     super.key,
     required this.cells,
-    required this.onPlay,
+    this.onPlay,
+    this.fontSize,
   });
 
-  final CellList cells;
+  final PlayList cells;
   final void Function(Cell cell)? onPlay;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +30,7 @@ class TicTacToeBoard extends StatelessWidget {
                     size: constraints.biggest.shortestSide / 3,
                     playerType: cells[Cell.fromCoord(i, j).index],
                     onPressed: () => onPlay?.call(Cell.fromCoord(i, j)),
+                    fontSize: fontSize,
                   ),
               ],
             )
@@ -42,22 +46,13 @@ class TicTacToeCell extends StatelessWidget {
     required this.playerType,
     required this.size,
     required this.onPressed,
+    this.fontSize,
   });
 
   final double size;
+  final double? fontSize;
   final PlayerType? playerType;
   final void Function() onPressed;
-
-  Color getBackgroundColor() {
-    switch (playerType) {
-      case null:
-        return Colors.grey.shade600;
-      case PlayerType.X:
-        return Colors.red.shade300;
-      case PlayerType.O:
-        return Colors.blue.shade300;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +64,15 @@ class TicTacToeCell extends StatelessWidget {
           onPressed: onPressed,
           style: FilledButton.styleFrom(
             fixedSize: Size.square(size),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle:
-                const TextStyle(fontSize: 80, fontWeight: FontWeight.w600),
-            backgroundColor: getBackgroundColor().withOpacity(0.7),
+            shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
+            alignment: Alignment.center,
+            padding: EdgeInsets.zero,
+            textStyle: TextStyle(
+              fontSize: fontSize ?? 80,
+              fontWeight: FontWeight.w600,
+            ),
+            backgroundColor:
+                (playerType?.color ?? Colors.grey.shade600).withOpacity(0.7),
             foregroundColor: Colors.white70,
           ),
           child: Text(playerType?.name ?? ""),

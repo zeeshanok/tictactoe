@@ -1,13 +1,19 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
 
 enum PlayerType { O, X }
 
 extension PlayerTypeUtils on PlayerType {
   PlayerType get flipped => PlayerType.values[1 - (index)];
+  Color get color => switch (this) {
+        PlayerType.X => Colors.red.shade300,
+        PlayerType.O => Colors.blue.shade300,
+      };
 }
 
 abstract class Player {
@@ -61,7 +67,7 @@ class MiniMaxComputerPlayer implements Player {
   MiniMaxComputerPlayer({required this.playerType}) : internalName = 'Computer';
 
   (int action, int value) minimax({
-    required CellList state,
+    required PlayList state,
     int? action,
   }) {
     final stateResult = getResultFromCells(state);
@@ -97,11 +103,11 @@ class MiniMaxComputerPlayer implements Player {
   }
 
   /// Returns indexes of possible moves
-  Iterable<int> possibleMoves(CellList cells) {
+  Iterable<int> possibleMoves(PlayList cells) {
     return cells.indexed.where((p) => p.$2 == null).map((e) => e.$1);
   }
 
-  CellList getActionResult(int action, PlayerType playerType, CellList cells) {
+  PlayList getActionResult(int action, PlayerType playerType, PlayList cells) {
     return cells.indexed
         .map((e) => e.$1 == action ? playerType : e.$2)
         .toList();

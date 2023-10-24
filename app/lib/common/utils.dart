@@ -1,8 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 const _abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+final defaultBorderRadius = BorderRadius.circular(8);
 
 String getRandomString(int length) {
   final r = Random.secure();

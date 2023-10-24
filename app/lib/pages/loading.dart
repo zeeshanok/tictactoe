@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tictactoe/common/widgets/loading.dart';
 
 class LoadingPage extends StatelessWidget {
   const LoadingPage({super.key});
@@ -7,10 +8,7 @@ class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 300,
-          child: LinearProgressIndicator(),
-        ),
+        child: LoadingWidget(),
       ),
     );
   }

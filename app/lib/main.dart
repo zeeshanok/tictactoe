@@ -3,8 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/common/transitions.dart';
-import 'package:tictactoe/pages/game/game_history.dart';
-import 'package:tictactoe/pages/game/game_scaffold_with_nav.dart';
+import 'package:tictactoe/pages/home/history/game_history.dart';
+import 'package:tictactoe/pages/home/game_scaffold_with_nav.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/create_user/create_user.dart';
@@ -12,9 +12,9 @@ import 'package:tictactoe/preferences/preferences.dart';
 import 'package:tictactoe/services/game_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 import 'package:tictactoe/pages/authenticate/authenticate.dart';
-import 'package:tictactoe/pages/game/game_select.dart';
-import 'package:tictactoe/pages/game/local_multiplayer/local_multiplayer.dart';
-import 'package:tictactoe/pages/game/singleplayer/singleplayer.dart';
+import 'package:tictactoe/pages/home/game_select.dart';
+import 'package:tictactoe/pages/home/local_multiplayer/local_multiplayer.dart';
+import 'package:tictactoe/pages/home/singleplayer/singleplayer.dart';
 import 'package:tictactoe/pages/loading.dart';
 
 void main() async {
@@ -127,19 +127,18 @@ GoRouter getRouter() {
 }
 
 ThemeData buildTheme(Brightness brightness) {
-  final borderRadius = BorderRadius.circular(8);
   final scheme =
       ColorScheme.fromSeed(seedColor: Colors.pink, brightness: brightness);
   return ThemeData.from(colorScheme: scheme, useMaterial3: true).copyWith(
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: borderRadius,
+          borderRadius: defaultBorderRadius,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
       ),
@@ -147,7 +146,7 @@ ThemeData buildTheme(Brightness brightness) {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: borderRadius,
+          borderRadius: defaultBorderRadius,
         ),
       ),
     ),
@@ -159,19 +158,19 @@ ThemeData buildTheme(Brightness brightness) {
       fillColor: scheme.outline.withOpacity(0.1),
       focusColor: scheme.outline.withOpacity(0.1),
       enabledBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
+        borderRadius: defaultBorderRadius,
         borderSide: const BorderSide(color: Colors.transparent),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
+        borderRadius: defaultBorderRadius,
         borderSide: const BorderSide(color: Colors.transparent),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
+        borderRadius: defaultBorderRadius,
         borderSide: const BorderSide(color: Colors.transparent),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: borderRadius,
+        borderRadius: defaultBorderRadius,
         borderSide: BorderSide(
           color: scheme.error,
         ),

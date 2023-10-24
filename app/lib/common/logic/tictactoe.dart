@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:tictactoe/common/logic/player.dart';
 
-typedef CellList = List<PlayerType?>;
+typedef PlayList = List<PlayerType?>;
 
-int getMoveCount(CellList cells) => cells.where((c) => c != null).length;
+int getMoveCount(PlayList cells) => cells.where((c) => c != null).length;
 
 PlayerType getCurrentPlayerType(cells) =>
     getMoveCount(cells) % 2 == 0 ? PlayerType.X : PlayerType.O;
@@ -15,22 +15,24 @@ enum GameType {
 }
 
 extension GameTypeString on GameType {
-  String get name => switch (this) {
-        GameType.computer => 'computer',
-        GameType.localMultiplayer => 'local-multiplayer',
-        GameType.online => 'online',
-      };
-
-  static GameType fromName(String name) => switch (name) {
-        'computer' => GameType.computer,
-        'local-multiplayer' => GameType.localMultiplayer,
-        'online' => GameType.online,
-        _ => throw Exception("Unknown gametype")
-      };
+  String get name {
+    return switch (this) {
+      GameType.computer => 'computer',
+      GameType.localMultiplayer => 'local-multiplayer',
+      GameType.online => 'online',
+    };
+  }
 }
 
+GameType gameTypeFromName(String name) => switch (name) {
+      'computer' => GameType.computer,
+      'local-multiplayer' => GameType.localMultiplayer,
+      'online' => GameType.online,
+      _ => throw Exception("Unknown gametype")
+    };
+
 class TicTacToe extends ChangeNotifier {
-  final CellList cells;
+  final PlayList cells;
 
   final List<Cell> moves;
 
@@ -128,7 +130,7 @@ class TicTacToe extends ChangeNotifier {
 }
 
 /// Returns null if the game is still ongoing otherwise returns the result
-GameResult? getResultFromCells(CellList cells) {
+GameResult? getResultFromCells(PlayList cells) {
   final moveCount = getMoveCount(cells);
   if (moveCount < 3) return null;
 
@@ -219,6 +221,17 @@ class Cell {
 
   @override
   String toString() => "$x$y";
+}
+
+extension CellListUtils on List<Cell> {
+  List<PlayerType?> toPlayList() {
+    final List<PlayerType?> playList = List.generate(9, (_) => null);
+    for (final (i, cell) in indexed) {
+      // convert cell to PlayerType (O, X)
+      playList[cell.index] = PlayerType.values[1 - (i % 2)];
+    }
+    return playList;
+  }
 }
 
 abstract class GameResult {}
