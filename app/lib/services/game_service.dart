@@ -12,7 +12,7 @@ class GameService with UsesAuthServiceMixin {
 
   @override
   void initialise() {
-    dio.options.baseUrl = '$serverUrl/games';
+    dio.options.baseUrl = '${serverUrl()}/games';
     userService = GetIt.instance<UserService>();
     super.initialise();
   }
@@ -38,7 +38,6 @@ class GameService with UsesAuthServiceMixin {
         final pO = gameMap['playerO'];
         var playerX = await _getUserIfId(pX);
         var playerO = await _getUserIfId(pO);
-        debugPrint(gameMap['createdAt'].runtimeType.toString());
         return TicTacToeGameModel(
           id: gameMap['id'],
           playerXName: playerX?.username ?? pX,

@@ -9,7 +9,7 @@ import 'package:tictactoe/services/auth/windows_auth_code_receiver.dart';
 import 'package:tictactoe/preferences/preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final _dio = Dio(BaseOptions(baseUrl: serverUrl));
+final _dio = Dio(BaseOptions(baseUrl: serverUrl()));
 
 /// Attempt to login with a locally saved session token.
 Future<bool> _attemptSessionLogin() async {
@@ -115,7 +115,7 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
   }
 
   Future<bool> _signInWithServer() async {
-    await launchUrl(Uri.parse('$serverUrl/auth'),
+    await launchUrl(Uri.parse('${serverUrl()}/auth'),
         mode: LaunchMode.externalApplication);
     final sessionToken = await SessionTokenReceiver.receive();
 
@@ -219,6 +219,7 @@ class AndroidWebAuthService extends ChangeNotifier implements AuthService {
   Future<void> signOut() async {
     final res = await _dio.delete('/auth');
     if (res.statusCode == 200) {
+      googleSignIn.disconnect();
       await _prefs.setSessionToken(null);
       _setIsAuthed(false);
     }

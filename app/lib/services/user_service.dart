@@ -12,7 +12,7 @@ class UserService extends ChangeNotifier with UsesAuthServiceMixin {
 
   @override
   void initialise() {
-    dio.options.baseUrl = '$serverUrl/users';
+    dio.options.baseUrl = '${serverUrl()}/users';
     super.initialise();
   }
 

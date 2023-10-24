@@ -1,4 +1,4 @@
-import { Express, Request, Response } from 'express';
+import { Express } from 'express';
 import auth from '../controllers/auth.controller';
 import users from '../controllers/user.controller';
 import games from '../controllers/game.controller';
