@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
 
 class TicTacToeGame extends StatefulWidget {
@@ -39,7 +40,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
+          AnimatedText(
             buildStatusText(widget.game),
             style: const TextStyle(fontSize: 40),
           )

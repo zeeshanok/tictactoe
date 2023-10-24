@@ -37,7 +37,11 @@ class HistoryItem extends StatelessWidget {
               child: IgnoreMouse(
                 child: TicTacToeBoard(
                   cells: game.moves.toPlayList(),
-                  fontSize: 30,
+                  fontSize: responsiveValue(
+                    context,
+                    mobileValue: 30,
+                    desktopValue: 40,
+                  ),
                 ),
               ),
             ),

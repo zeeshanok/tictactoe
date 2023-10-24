@@ -116,7 +116,7 @@ class NavRail extends StatelessWidget {
             radius: 18,
           ),
           selectedPath: selectedPath,
-        ).animate().shimmer()
+        ),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tictactoe/common/consts.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
