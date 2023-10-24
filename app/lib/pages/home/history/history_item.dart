@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/utils.dart';
+import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/ignore_mouse.dart';
 import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
-import 'package:tictactoe/common/widgets/user_widget.dart';
 import 'package:tictactoe/models/game.dart';
 import 'package:tictactoe/services/user_service.dart';
 
@@ -17,20 +19,21 @@ class HistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size =
+        responsiveValue(context, mobileValue: 140.0, desktopValue: 200.0);
     return Container(
-      width: 300,
       decoration: BoxDecoration(
         borderRadius: defaultBorderRadius,
         color: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
       ),
       padding: const EdgeInsets.all(8),
       child: SizedBox(
-        height: 200,
+        height: size,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 200,
+              width: size,
               child: IgnoreMouse(
                 child: TicTacToeBoard(
                   cells: game.moves.toPlayList(),
@@ -52,9 +55,14 @@ class GameDetails extends StatelessWidget {
 
   final TicTacToeGameModel game;
 
-  String getResultText() =>
-      switch (getResultFromCells(game.moves.toPlayList())) {
-        null => "This game did not end", // really shouldn't reach here
+  Future<GameResult?> getResultAsync() async =>
+      await SchedulerBinding.instance.scheduleTask(
+        () => getResultFromCells(game.moves.toPlayList()),
+        Priority.animation,
+      );
+
+  Future<String> getResultText() async => switch (await getResultAsync()) {
+        null => "Unfinished", // really shouldn't reach here
         DrawResult() => "Draw",
         WinResult(:final playerType) => getWinText(playerType),
         _ => throw UnimplementedError()
@@ -71,15 +79,23 @@ class GameDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final format = DateFormat('hh:mm a d MMMM');
+    final format = DateFormat('hh:mm a, d MMMM');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // convert from utc time to local
-        Text(
-          getResultText(),
-          style: const TextStyle(fontSize: 40),
-        ),
+        FutureBuilder(
+            future: getResultText(),
+            builder: (context, snapshot) {
+              return AnimatedText(
+                snapshot.data ?? "",
+                style: TextStyle(
+                  fontSize: responsiveValue(context,
+                      mobileValue: 34, desktopValue: 40),
+                ),
+              );
+            }),
+        const SizedBox(height: 8),
         Text.rich(TextSpan(children: [
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
@@ -116,7 +132,7 @@ class PlayerNameWithType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
       decoration: BoxDecoration(
         color: type.color.withOpacity(0.7),
         borderRadius: BorderRadius.circular(4),

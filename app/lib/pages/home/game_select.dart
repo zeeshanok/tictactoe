@@ -1,34 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/responsive_builder.dart';
 
 class GameSelectPage extends StatelessWidget {
   const GameSelectPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final children = [
+      GameTypeWidget(
+        gameType: GameType.computer,
+        onPressed: () => context.go('/play/singleplayer'),
+      ),
+      const SizedBox(width: 14, height: 14),
+      GameTypeWidget(
+        gameType: GameType.localMultiplayer,
+        onPressed: () => context.go('/play/local-multiplayer'),
+      ),
+      const SizedBox(width: 14, height: 14),
+      GameTypeWidget(
+        gameType: GameType.online,
+        onPressed: () => context.go('/play/multiplayer'),
+      )
+    ];
     return Container(
       color: Theme.of(context).colorScheme.background,
       child: Center(
-          child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GameTypeWidget(
-            gameType: GameType.computer,
-            onPressed: () => context.go('/play/singleplayer'),
+        child: ResponsiveBuilder(
+          mobileBuilder: (context) => FractionallySizedBox(
+            widthFactor: 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children,
+            ),
           ),
-          const SizedBox(width: 14),
-          GameTypeWidget(
-            gameType: GameType.localMultiplayer,
-            onPressed: () => context.go('/play/local-multiplayer'),
+          desktopBuilder: (context) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: children,
           ),
-          const SizedBox(width: 14),
-          GameTypeWidget(
-            gameType: GameType.online,
-            onPressed: () => context.go('/play/multiplayer'),
-          )
-        ],
-      )),
+        ),
+      ),
     );
   }
 }

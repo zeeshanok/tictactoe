@@ -2,44 +2,87 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
+import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 
 class HomeScaffoldWithNav extends StatelessWidget {
-  const HomeScaffoldWithNav({
+  HomeScaffoldWithNav({
     super.key,
-    required this.child,
     required this.state,
+    required this.child,
   });
 
   final Widget child;
   final GoRouterState state;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            SizedBox(
-              width: 200,
-              child: NavRail(selectedPath: state.fullPath!),
-            ),
-            const VerticalDivider(width: 16),
-            Expanded(
-              child: Container(
-                child: child,
+  Widget buildDesktopLayout(BuildContext context) => Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SizedBox(
+                width: 200,
+                child: NavRail(selectedPath: state.fullPath!),
               ),
+              const VerticalDivider(width: 16),
+              Expanded(
+                child: Container(
+                  child: child,
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+
+  Widget buildMobileLayout(BuildContext context) => Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor:
+              Theme.of(context).colorScheme.background.withOpacity(0.9),
+          surfaceTintColor: Colors.transparent,
+          actions: [
+            IconButton(
+              onPressed: () async =>
+                  await context.read<AuthService>().signOut(),
+              icon: const Icon(Icons.logout_rounded),
             )
           ],
         ),
-      ),
-    );
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.gamepad_rounded), label: 'Play'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.history_rounded), label: 'History')
+          ],
+          currentIndex: _getIndex(state.fullPath!),
+          onTap: (index) => _onTap(context, index),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: child,
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+        mobileBuilder: buildMobileLayout, desktopBuilder: buildDesktopLayout);
   }
+
+  final Map<String, int> indexMap = {'/': 0, '/history': 1};
+
+  void _onTap(BuildContext context, int index) =>
+      context.go({for (final e in indexMap.entries) e.value: e.key}[index]!);
+
+  // I'm aware StatefulShellRoute exists but I am doing this so that
+  // the page is rebuilt every time it is visited
+  int _getIndex(String path) => indexMap[path] ?? 0;
 }
 
 class NavRail extends StatelessWidget {
