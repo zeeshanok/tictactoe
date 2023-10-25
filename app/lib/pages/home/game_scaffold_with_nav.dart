@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
 import 'package:tictactoe/common/widgets/user_widget.dart';
-import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 
 class HomeScaffoldWithNav extends StatelessWidget {

@@ -1,8 +1,7 @@
-import express, { NextFunction, Request, Response, Router } from "express";
+import express, { Request, Response, Router } from "express";
 import { useTypeOrm } from "../database/typeorm";
 import { User } from "../database/entities/user.entity";
-import { getSessionToken } from "../utils";
-import { getGoogleUserInfo, getSessionFromToken, getUserById, getUserFromToken } from "./common";
+import { getGoogleUserInfo, getSessionFromToken, getUserById, getUserFromToken, requireSessionToken } from "./common";
 
 /**
  * Update profile url of a given user
@@ -19,15 +18,7 @@ const controller = Router();
 
 
 controller
-    .use((req: Request, res: Response, next: NextFunction) => {
-        if (!getSessionToken(req)) {
-            console.log(`received request without session token (${req.path}), blocking...`);
-            res.status(400);
-            res.send('provide a session token to access this path');
-            return;
-        }
-        next();
-    })
+    .use(requireSessionToken())
     .use(express.json())
     .get('/me', async (req: Request, res: Response) => {
         const session = await getSessionFromToken(req);

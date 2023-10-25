@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
