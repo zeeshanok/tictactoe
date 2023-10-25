@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/choose_side.dart';
+import 'package:tictactoe/common/widgets/copyable_text.dart';
 import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
 import 'package:tictactoe/common/widgets/loading.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
@@ -136,7 +137,7 @@ class _ShowGameCodeState extends State<ShowGameCode> {
           child: LoadingWidget(width: 200),
         ),
         const Spacer(),
-        SelectableText(
+        CopyableText(
           widget.gameManager.gameCode.toString(),
           style: const TextStyle(fontSize: 40),
         ),
