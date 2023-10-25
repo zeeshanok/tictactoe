@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:tictactoe/common/transitions.dart';
 import 'package:tictactoe/pages/home/history/game_history.dart';
 import 'package:tictactoe/pages/home/game_scaffold_with_nav.dart';
+import 'package:tictactoe/pages/home/online/online.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/create_user/create_user.dart';
 import 'package:tictactoe/preferences/preferences.dart';
 import 'package:tictactoe/services/game_service.dart';
+import 'package:tictactoe/services/multiplayer_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 import 'package:tictactoe/pages/authenticate/authenticate.dart';
 import 'package:tictactoe/pages/home/game_select.dart';
@@ -27,11 +29,13 @@ void main() async {
   final auth = getAuthService();
   final user = UserService();
   final game = GameService();
+  final multiplayer = MultiplayerService();
 
   GetIt.instance.registerSingleton<LocalPreferences>(prefs);
   GetIt.instance.registerSingleton<AuthService>(auth);
   GetIt.instance.registerSingleton<UserService>(user);
   GetIt.instance.registerSingleton<GameService>(game);
+  GetIt.instance.registerSingleton<MultiplayerService>(multiplayer);
 
   runApp(MultiProvider(
     providers: [
@@ -39,6 +43,7 @@ void main() async {
       ChangeNotifierProvider<AuthService>(create: (context) => auth),
       ChangeNotifierProvider<UserService>(create: (context) => user),
       Provider<GameService>(create: (context) => game),
+      Provider<MultiplayerService>(create: (context) => multiplayer),
     ],
     builder: (context, child) => const App(),
   ));
@@ -47,6 +52,7 @@ void main() async {
   await auth.start();
   user.initialise();
   game.initialise();
+  multiplayer.initialise();
 }
 
 GoRouter getRouter() {
@@ -100,8 +106,10 @@ GoRouter getRouter() {
               GoRoute(
                 path: 'play/singleplayer',
                 parentNavigatorKey: rootNavKey,
-                pageBuilder: (context, state) =>
-                    slideLeftTransition(state, const SinglePlayerPage()),
+                pageBuilder: (context, state) => slideLeftTransition(
+                  state,
+                  const SinglePlayerPage(),
+                ),
               ),
               GoRoute(
                 path: 'play/local-multiplayer',
@@ -111,6 +119,14 @@ GoRouter getRouter() {
                   const LocalMultiplayerPage(),
                 ),
               ),
+              GoRoute(
+                path: 'play/online',
+                parentNavigatorKey: rootNavKey,
+                pageBuilder: (context, state) => slideLeftTransition(
+                  state,
+                  const OnlinePage(),
+                ),
+              )
             ],
           ),
           GoRoute(

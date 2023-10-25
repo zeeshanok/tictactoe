@@ -78,10 +78,10 @@ wss.on('connection', (ws: WebSocket) => {
 controller
 
     .use(requireSessionToken())
-    .post('/:playerType(^[XO]$)', (req: Request, res: Response) => {
-        const gameId = generateGameCode();
-        readyIds.add(gameId);
-        res.send({ gameId });
+    .post('/', (req: Request, res: Response) => {
+        const gameCode = generateGameCode();
+        readyIds.add(gameCode);
+        res.send({ gameCode });
     });
 
 

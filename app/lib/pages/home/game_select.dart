@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
+import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
 
 class GameSelectPage extends StatelessWidget {
   const GameSelectPage({super.key});
@@ -21,7 +22,7 @@ class GameSelectPage extends StatelessWidget {
       const SizedBox(width: 14, height: 14),
       GameTypeWidget(
         gameType: GameType.online,
-        onPressed: () => context.go('/play/multiplayer'),
+        onPressed: () => context.go('/play/online'),
       )
     ];
     return Container(
@@ -67,29 +68,10 @@ class GameTypeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(200, 0),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              buildIcon(),
-              size: 60,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              buildText(),
-              style: const TextStyle(
-                height: 1,
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ],
-        ));
+    return LabeledOutlinedButton(
+      label: buildText(),
+      icon: buildIcon(),
+      onPressed: onPressed,
+    );
   }
 }

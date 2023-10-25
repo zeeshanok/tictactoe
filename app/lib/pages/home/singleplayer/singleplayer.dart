@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/tictactoe_game.dart';
-import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
 import 'package:tictactoe/services/game_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 
@@ -77,41 +77,6 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                 ),
         ),
       ),
-    );
-  }
-}
-
-class ChooseSide extends StatelessWidget {
-  const ChooseSide({super.key, required this.onChoose});
-
-  final void Function(PlayerType playerType) onChoose;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Text(
-          "Choose a side",
-          style: TextStyle(fontSize: 30),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TicTacToeCell(
-              playerType: PlayerType.X,
-              size: 150,
-              onPressed: () => onChoose(PlayerType.X),
-            ),
-            TicTacToeCell(
-              playerType: PlayerType.O,
-              size: 150,
-              onPressed: () => onChoose(PlayerType.O),
-            ),
-          ],
-        )
-      ],
     );
   }
 }

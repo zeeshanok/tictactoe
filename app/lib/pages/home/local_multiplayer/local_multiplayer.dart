@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/tictactoe_game.dart';
-import 'package:tictactoe/pages/home/singleplayer/singleplayer.dart';
 import 'package:tictactoe/services/game_service.dart';
 import 'package:tictactoe/services/user_service.dart';
 
