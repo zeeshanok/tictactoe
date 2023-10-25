@@ -26,7 +26,7 @@ function handleGame(code: number) {
     const players = [game.x!, game.o!];
 
     const closeConnections = () => players.forEach((p) => p.ws.close());
-    const endGame = () => {};
+    const endGame = () => { };
 
     const onPlayerMessage = (num: 0 | 1) => players[num].ws.on('message', (data: RawData) => {
         const msg = data.toString();
@@ -46,6 +46,7 @@ wss.on('connection', (ws: WebSocket) => {
     console.log('incoming connection');
     ws.once('message', (data: RawData) => {
         console.log(`incoming message ${data.toString()}`);
+
         // {game code}{player type?}{user id}
         // example 112233o3 (game code: 112233, player type: o, user id: 3)
         const parts = data.toString().match(/^(\d{6})([xo]?)(\d+)$/)?.slice(1);
@@ -59,19 +60,28 @@ wss.on('connection', (ws: WebSocket) => {
                 gameClients[code] = {};
                 gameClients[code][parts[1] as 'x' | 'o'] = idPair;
                 console.log('created new game');
+                return;
             } else if (gameClients[code] !== undefined) {
                 // we are the opponent player
-                console.log(gameClients[code]);
+                const message = `joined${userId}`;
                 if (!gameClients[code].x) {
                     gameClients[code].x = idPair;
-                    console.log('added x')
+                    const o = gameClients[code].o!;
+                    o.ws.send(message);
+                    idPair.ws.send(`joined${o.userId}`);
                 } else {
                     gameClients[code].o = idPair;
-                    console.log('added x')
+                    const x = gameClients[code].x!;
+                    x.ws.send(message);
+                    idPair.ws.send(`joined${x.userId}`);
                 }
                 handleGame(code);
+                return;
             }
         }
+        // if it reaches here the game doesn't exist
+        console.log("requested game does'nt existsSync, disconnecting...");
+        ws.close();
     });
 });
 

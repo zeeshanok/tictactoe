@@ -19,7 +19,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       case DrawResult _:
         return "Draw";
       case WinResult win:
-        return "${win.player} wins";
+        return "${game.getPlayerFromType(win.playerType).displayName} wins";
       default:
         return "${game.currentPlayer.displayName}'s turn";
     }

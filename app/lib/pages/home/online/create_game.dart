@@ -5,6 +5,7 @@ import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
 import 'package:tictactoe/common/widgets/loading.dart';
+import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
 
 class JoinOrCreateGame extends StatelessWidget {
@@ -41,7 +42,7 @@ class CreateGameDialog extends StatefulWidget {
 }
 
 class _CreateGameDialogState extends State<CreateGameDialog> {
-  Future? _future;
+  Future<MultiplayerGameManager?>? _future;
 
   final _controller = PageController();
 
@@ -77,7 +78,7 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
                   builder: (context, snapshot) => AnimatedSwitcher(
                     duration: 200.ms,
                     child: snapshot.hasData
-                        ? ShowGameCode(code: snapshot.data.toString())
+                        ? ShowGameCode(gameManager: snapshot.data!)
                         : const LoadingWidget(),
                   ),
                 ),
@@ -90,12 +91,30 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
   }
 }
 
-class ShowGameCode extends StatelessWidget {
-  const ShowGameCode({super.key, required this.code});
+class ShowGameCode extends StatefulWidget {
+  const ShowGameCode({super.key, required this.gameManager});
 
-  final String code;
+  final MultiplayerGameManager gameManager;
+
+  @override
+  State<ShowGameCode> createState() => _ShowGameCodeState();
+}
+
+class _ShowGameCodeState extends State<ShowGameCode> {
+  void _onGameManagerChange() {
+    if (widget.gameManager.hasGameStarted) {
+      Navigator.of(context, rootNavigator: true).pop(widget.gameManager);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.gameManager.addListener(_onGameManagerChange);
+  }
 
   Widget buildMobileLayout(BuildContext context) => Container();
+
   Widget buildDesktopLayout(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +129,7 @@ class ShowGameCode extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            code,
+            widget.gameManager.gameCode.toString(),
             style: const TextStyle(fontSize: 40),
           ),
           const Text(
@@ -123,6 +142,14 @@ class ShowGameCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        mobileBuilder: buildMobileLayout, desktopBuilder: buildDesktopLayout);
+      mobileBuilder: buildMobileLayout,
+      desktopBuilder: buildDesktopLayout,
+    );
+  }
+
+  @override
+  void dispose() {
+    widget.gameManager.removeListener(_onGameManagerChange);
+    super.dispose();
   }
 }

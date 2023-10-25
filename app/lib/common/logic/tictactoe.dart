@@ -127,6 +127,11 @@ class TicTacToe extends ChangeNotifier {
         "playerO": playerO.internalName,
         "timePlayed": stopwatch.elapsed.inSeconds,
       };
+
+  Player getPlayerFromType(PlayerType type) => switch (type) {
+        PlayerType.X => playerX,
+        PlayerType.O => playerO,
+      };
 }
 
 /// Returns null if the game is still ongoing otherwise returns the result
@@ -240,7 +245,6 @@ class WinResult implements GameResult {
   final PlayerType playerType;
 
   WinResult({required this.playerType});
-  String get player => playerType.name;
 }
 
 class DrawResult implements GameResult {}
