@@ -15,21 +15,29 @@ class JoinOrCreateGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        LabeledOutlinedButton(
-          label: "Join game",
-          icon: Icons.language_rounded,
-          onPressed: () {},
-        ),
-        const SizedBox(width: 8),
-        LabeledOutlinedButton(
-          label: "Create game",
-          icon: Icons.add_rounded,
-          onPressed: onCreate,
-        ),
-      ],
+    final children = [
+      LabeledOutlinedButton(
+        label: "Join game",
+        icon: Icons.language_rounded,
+        onPressed: () {},
+      ),
+      const SizedBox.square(dimension: 8),
+      LabeledOutlinedButton(
+        label: "Create game",
+        icon: Icons.add_rounded,
+        onPressed: onCreate,
+      ),
+    ];
+
+    return ResponsiveBuilder(
+      mobileBuilder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+      desktopBuilder: (context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
     );
   }
 }
@@ -57,7 +65,7 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
         height: 300,
         width: 500,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(30),
           child: PageView(
             controller: _controller,
             children: [
@@ -113,37 +121,31 @@ class _ShowGameCodeState extends State<ShowGameCode> {
     widget.gameManager.addListener(_onGameManagerChange);
   }
 
-  Widget buildMobileLayout(BuildContext context) => Container();
-
-  Widget buildDesktopLayout(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Waiting for opponent...',
-            style: TextStyle(fontSize: 26),
-          ),
-          const Spacer(),
-          const Center(
-            child: LoadingWidget(),
-          ),
-          const Spacer(),
-          Text(
-            widget.gameManager.gameCode.toString(),
-            style: const TextStyle(fontSize: 40),
-          ),
-          const Text(
-            "Give this code to your friend and ask them to click `Join Game`",
-            style: TextStyle(fontStyle: FontStyle.italic),
-          )
-        ],
-      );
-
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      mobileBuilder: buildMobileLayout,
-      desktopBuilder: buildDesktopLayout,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Waiting for opponent...',
+          style: TextStyle(fontSize: 26),
+        ),
+        const Spacer(),
+        const Center(
+          child: LoadingWidget(width: 200),
+        ),
+        const Spacer(),
+        SelectableText(
+          widget.gameManager.gameCode.toString(),
+          style: const TextStyle(fontSize: 40),
+        ),
+        const Text(
+          "Give this code to your friend and ask them to click `Join Game`",
+          style: TextStyle(fontStyle: FontStyle.italic),
+          textAlign: TextAlign.center,
+        )
+      ],
     );
   }
 
