@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/copyable_text.dart';
@@ -63,7 +64,7 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: SizedBox(
-        height: 300,
+        height: 400,
         width: 500,
         child: Padding(
           padding: const EdgeInsets.all(30),
@@ -124,6 +125,8 @@ class _ShowGameCodeState extends State<ShowGameCode> {
 
   @override
   Widget build(BuildContext context) {
+    final gameCode = widget.gameManager.gameCode.toString();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -132,15 +135,32 @@ class _ShowGameCodeState extends State<ShowGameCode> {
           'Waiting for opponent...',
           style: TextStyle(fontSize: 26),
         ),
-        const Spacer(),
+        const SizedBox(height: 12),
         const Center(
           child: LoadingWidget(width: 200),
         ),
-        const Spacer(),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: QrImageView(
+              data: 'ttt-$gameCode',
+              eyeStyle: QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+              dataModuleStyle: QrDataModuleStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                dataModuleShape: QrDataModuleShape.square,
+              ),
+            ),
+          ),
+        ),
         CopyableText(
-          widget.gameManager.gameCode.toString(),
+          gameCode,
           style: const TextStyle(fontSize: 40),
         ),
+        const SizedBox(height: 4),
         const Text(
           "Give this code to your friend and ask them to click `Join Game`",
           style: TextStyle(fontStyle: FontStyle.italic),
