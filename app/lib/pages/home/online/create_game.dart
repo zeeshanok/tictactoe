@@ -70,6 +70,8 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
           padding: const EdgeInsets.all(30),
           child: PageView(
             controller: _controller,
+            physics: const NeverScrollableScrollPhysics(),
+            allowImplicitScrolling: false,
             children: [
               Center(
                 child: ChooseSide(
