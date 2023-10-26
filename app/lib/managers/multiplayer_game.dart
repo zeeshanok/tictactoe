@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-final _joinedPattern = RegExp(r'^joined(\d+)(x|o)$');
+final _joinedPattern = RegExp(r'^youare(\d+)(x|o)$');
 
 class MultiplayerGameManager extends ChangeNotifier {
   final int gameCode;

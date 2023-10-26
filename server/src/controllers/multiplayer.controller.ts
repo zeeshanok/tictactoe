@@ -63,17 +63,17 @@ wss.on('connection', (ws: WebSocket) => {
                 return;
             } else if (gameClients[code] !== undefined) {
                 // we are the opponent player
-                const message = `joined${userId}`;
+                const message = `youare${userId}`;
                 if (!gameClients[code].x) {
                     gameClients[code].x = idPair;
                     const o = gameClients[code].o!;
-                    o.ws.send(`${message}x`);
-                    idPair.ws.send(`joined${o.userId}o`);
+                    o.ws.send(`${message}o`);
+                    idPair.ws.send(`youare${o.userId}x`);
                 } else {
                     gameClients[code].o = idPair;
                     const x = gameClients[code].x!;
-                    x.ws.send(`${message}o`);
-                    idPair.ws.send(`joined${x.userId}x`);
+                    x.ws.send(`${message}x`);
+                    idPair.ws.send(`youare${x.userId}o`);
                 }
                 handleGame(code);
                 return;
