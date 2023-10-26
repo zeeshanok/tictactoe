@@ -22,16 +22,20 @@ class MultiplayerService with UsesAuthServiceMixin {
     final response = await dio.post('/');
     if (response.statusCode == 200) {
       final int code = response.data['gameCode'];
-      final message =
-          '$code${playerType.name.toLowerCase()}${userService.currentUser!.id}';
+      final message = '$code${playerType.name}${userService.currentUser!.id}';
       final channel = WebSocketChannel.connect(Uri.parse(websocketUrl()));
       channel.sink.add(message);
       return MultiplayerGameManager(
         channel: channel,
         gameCode: code,
-        currentUserSide: playerType,
       );
     }
     return null;
+  }
+
+  Future<MultiplayerGameManager> joinGame(int gameCode) async {
+    final channel = WebSocketChannel.connect(Uri.parse(websocketUrl()));
+    channel.sink.add("$gameCode${userService.currentUser!.id}");
+    return MultiplayerGameManager(gameCode: gameCode, channel: channel);
   }
 }

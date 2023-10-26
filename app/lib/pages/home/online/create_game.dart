@@ -2,47 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/copyable_text.dart';
-import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
+import 'package:tictactoe/common/widgets/default_dialog.dart';
 import 'package:tictactoe/common/widgets/loading.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
-
-class JoinOrCreateGame extends StatelessWidget {
-  const JoinOrCreateGame({super.key, required this.onCreate});
-
-  final void Function() onCreate;
-
-  @override
-  Widget build(BuildContext context) {
-    final children = [
-      LabeledOutlinedButton(
-        label: "Join game",
-        icon: Icons.language_rounded,
-        onPressed: () {},
-      ),
-      const SizedBox.square(dimension: 8),
-      LabeledOutlinedButton(
-        label: "Create game",
-        icon: Icons.add_rounded,
-        onPressed: onCreate,
-      ),
-    ];
-
-    return ResponsiveBuilder(
-      mobileBuilder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: children,
-      ),
-      desktopBuilder: (context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: children,
-      ),
-    );
-  }
-}
 
 class CreateGameDialog extends StatefulWidget {
   const CreateGameDialog({super.key});
@@ -62,42 +27,36 @@ class _CreateGameDialogState extends State<CreateGameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: SizedBox(
-        height: 400,
-        width: 500,
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: PageView(
-            controller: _controller,
-            physics: const NeverScrollableScrollPhysics(),
-            allowImplicitScrolling: false,
-            children: [
-              Center(
-                child: ChooseSide(
-                  onChoose: (p) async {
-                    await _next();
-                    setState(() {
-                      _future =
-                          context.read<MultiplayerService>().createGame(p);
-                    });
-                  },
-                ),
-              ),
-              Center(
-                child: FutureBuilder(
-                  future: _future,
-                  builder: (context, snapshot) => AnimatedSwitcher(
-                    duration: 200.ms,
-                    child: snapshot.hasData
-                        ? ShowGameCode(gameManager: snapshot.data!)
-                        : const LoadingWidget(),
-                  ),
-                ),
-              )
-            ],
+    return DefaultDialog(
+      height: 400,
+      width: 500,
+      child: PageView(
+        controller: _controller,
+        physics: const NeverScrollableScrollPhysics(),
+        allowImplicitScrolling: false,
+        children: [
+          Center(
+            child: ChooseSide(
+              onChoose: (p) async {
+                await _next();
+                setState(() {
+                  _future = context.read<MultiplayerService>().createGame(p);
+                });
+              },
+            ),
           ),
-        ),
+          Center(
+            child: FutureBuilder(
+              future: _future,
+              builder: (context, snapshot) => AnimatedSwitcher(
+                duration: 200.ms,
+                child: snapshot.hasData
+                    ? ShowGameCode(gameManager: snapshot.data!)
+                    : const LoadingWidget(),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

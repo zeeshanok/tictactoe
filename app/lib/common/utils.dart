@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 const _abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
@@ -19,4 +19,17 @@ class CombineChangeNotifiers extends ChangeNotifier {
       notifier.addListener(notifyListeners);
     }
   }
+}
+
+final snackbarKey = GlobalKey<ScaffoldMessengerState>();
+
+void globalNotify(String message) {
+  snackbarKey.currentState?.showSnackBar(SnackBar(
+    content: Text(message),
+    behavior: SnackBarBehavior.floating,
+  ));
+}
+
+extension BoolUtils on bool {
+  bool xor(bool b) => (this && !b) || (!this && b);
 }

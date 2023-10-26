@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:tictactoe/common/logic/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/common/responsive_builder.dart';
+import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
 import 'package:tictactoe/common/widgets/tictactoe_game.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:tictactoe/pages/home/online/create_game.dart';
+import 'package:tictactoe/pages/home/online/join_game.dart';
 import 'package:tictactoe/services/user_service.dart';
 
 class OnlinePage extends StatefulWidget {
@@ -20,6 +23,43 @@ class _OnlinePageState extends State<OnlinePage> {
   TicTacToe? game;
   StreamController<Cell>? controller;
 
+  void createGame(MultiplayerGameManager manager) async {
+    final users = GetIt.instance<UserService>();
+    final opponent = await users.fetchUserById(manager.opponentUserId!);
+    final currentUser = users.currentUser!;
+    if (opponent != null) {
+      controller = StreamController();
+      final oppPlayer = WebSocketPlayer(
+        user: opponent,
+        channel: manager.channel,
+        stream: manager.stream,
+      );
+
+      final localPlayer = LocalPlayer(
+        moveStream: controller!.stream,
+        playerType: manager.currentUserSide,
+        gameType: GameType.online,
+        internalName: currentUser.id.toString(),
+      );
+      final isX = manager.currentUserSide == PlayerType.X;
+      setState(() => game = TicTacToe(
+            playerX: isX ? localPlayer : oppPlayer,
+            playerO: isX ? oppPlayer : localPlayer,
+            gameType: GameType.localMultiplayer,
+            onGameEnd: (game) {
+              if (game.currentPlayer is WebSocketPlayer) {
+                // let websocket player get the last move
+                oppPlayer.sendMove(game.moves.last);
+              } else {
+                oppPlayer.endGame();
+              }
+            },
+          ));
+      game!.startGame();
+    }
+    manager.stopListening();
+  }
+
   void doCreateGame() async {
     final result = await showDialog(
       context: context,
@@ -27,47 +67,24 @@ class _OnlinePageState extends State<OnlinePage> {
       builder: (context) => const CreateGameDialog(),
     );
     if (result is MultiplayerGameManager) {
-      final users = GetIt.instance<UserService>();
-      final opponent = await users.fetchUserById(result.opponentUserId!);
-      final currentUser = users.currentUser!;
-      if (opponent != null) {
-        controller = StreamController();
-        final oppPlayer = WebSocketPlayer(
-          user: opponent,
-          channel: result.channel,
-          stream: result.stream,
-        );
+      createGame(result);
+    }
+  }
 
-        final localPlayer = LocalPlayer(
-          moveStream: controller!.stream,
-          playerType: result.currentUserSide,
-          internalName: currentUser.id.toString(),
-        );
-        final isX = result.currentUserSide == PlayerType.X;
-        setState(() => game = TicTacToe(
-              playerX: isX ? localPlayer : oppPlayer,
-              playerO: isX ? oppPlayer : localPlayer,
-              gameType: GameType.localMultiplayer,
-              onGameEnd: (game) {
-                if (game.currentPlayer is WebSocketPlayer) {
-                  // let websocket player get the last move
-                  oppPlayer.sendMove(game.moves.last);
-                } else {
-                  oppPlayer.endGame();
-                }
-                result.endGame();
-              },
-            ));
-        game!.startGame();
-      } else {
-        result.endGame();
-      }
+  void doJoinGame() async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => const JoinGameDialog(),
+    );
+    if (result is MultiplayerGameManager) {
+      createGame(result);
     }
   }
 
   Widget buildPreGame(BuildContext context) {
     return JoinOrCreateGame(
       onCreate: doCreateGame,
+      onJoin: doJoinGame,
     );
   }
 
@@ -89,5 +106,43 @@ class _OnlinePageState extends State<OnlinePage> {
                   },
                 ),
         )));
+  }
+}
+
+class JoinOrCreateGame extends StatelessWidget {
+  const JoinOrCreateGame({
+    super.key,
+    required this.onCreate,
+    required this.onJoin,
+  });
+
+  final void Function() onCreate, onJoin;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = [
+      LabeledOutlinedButton(
+        label: "Join game",
+        icon: Icons.language_rounded,
+        onPressed: onJoin,
+      ),
+      const SizedBox.square(dimension: 8),
+      LabeledOutlinedButton(
+        label: "Create game",
+        icon: Icons.add_rounded,
+        onPressed: onCreate,
+      ),
+    ];
+
+    return ResponsiveBuilder(
+      mobileBuilder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+      desktopBuilder: (context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+    );
   }
 }

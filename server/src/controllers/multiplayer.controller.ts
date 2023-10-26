@@ -49,7 +49,7 @@ wss.on('connection', (ws: WebSocket) => {
 
         // {game code}{player type?}{user id}
         // example 112233o3 (game code: 112233, player type: o, user id: 3)
-        const parts = data.toString().match(/^(\d{6})([xo]?)(\d+)$/)?.slice(1);
+        const parts = data.toString().toLowerCase().match(/^(\d{6})([xo]?)(\d+)$/)?.slice(1);
         if (parts !== undefined && parts[2] !== undefined) {
             const code = Number.parseInt(parts[0]);
             const userId = Number.parseInt(parts[2]);
@@ -67,20 +67,21 @@ wss.on('connection', (ws: WebSocket) => {
                 if (!gameClients[code].x) {
                     gameClients[code].x = idPair;
                     const o = gameClients[code].o!;
-                    o.ws.send(message);
-                    idPair.ws.send(`joined${o.userId}`);
+                    o.ws.send(`${message}x`);
+                    idPair.ws.send(`joined${o.userId}o`);
                 } else {
                     gameClients[code].o = idPair;
                     const x = gameClients[code].x!;
-                    x.ws.send(message);
-                    idPair.ws.send(`joined${x.userId}`);
+                    x.ws.send(`${message}o`);
+                    idPair.ws.send(`joined${x.userId}x`);
                 }
                 handleGame(code);
                 return;
             }
         }
         // if it reaches here the game doesn't exist
-        console.log("requested game does'nt existsSync, disconnecting...");
+        console.log("requested game doesn't exist, disconnecting...");
+        ws.send('DNE'); // does not exist
         ws.close();
     });
 });

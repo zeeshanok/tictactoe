@@ -19,8 +19,10 @@ extension PlayerTypeUtils on PlayerType {
 }
 
 abstract class Player {
-  String get displayName;
   String get internalName;
+
+  String get turnText;
+  String get winText;
 
   /// Get player's next move given the current state of the board
   Future<Cell?> getMove(TicTacToe board);
@@ -30,27 +32,37 @@ class LocalPlayer implements Player {
   /// Stream of moves that the local player plays.
   /// Moves should be added to this stream from the UI.
   final Stream<Cell> _moveStream;
-  @override
-  String get displayName => _displayName;
-  final String _displayName;
 
   @override
   String get internalName => _internalName;
   final String _internalName;
 
+  @override
+  String get turnText => gameType == GameType.localMultiplayer
+      ? "${playerType.name}'s turn"
+      : "Your turn";
+
+  @override
+  String get winText => gameType == GameType.localMultiplayer
+      ? "${playerType.name} wins"
+      : "You win";
+
+  final PlayerType playerType;
+  final GameType gameType;
+
   LocalPlayer({
     required Stream<Cell> moveStream,
-    required PlayerType playerType,
     required String internalName,
+    required this.playerType,
+    required this.gameType,
+    String? displayName,
   })  : _moveStream = moveStream.asBroadcastStream(),
-        _displayName = playerType.name,
         _internalName = internalName;
 
   @override
   Future<Cell?> getMove(TicTacToe board) async {
     // The `board` parameter has no use here since the ui
     // passes in the moves of the player.
-    debugPrint("waiting for move");
 
     return await _moveStream.firstOrNull;
   }
@@ -59,9 +71,6 @@ class LocalPlayer implements Player {
 class MiniMaxComputerPlayer implements Player {
   /// The player type assigned to us
   final PlayerType playerType;
-
-  @override
-  String get displayName => "Computer (${playerType.name})";
 
   @override
   final String internalName;
@@ -123,12 +132,17 @@ class MiniMaxComputerPlayer implements Player {
     ]))[0] as (int, int);
     return Cell.fromIndex(result.$1);
   }
+
+  @override
+  String get turnText => "Computer's turn (${playerType.name})";
+
+  @override
+  String get winText => "Computer wins(${playerType.name})";
 }
 
 class WebSocketPlayer implements Player {
   final User _user;
 
-  @override
   String get displayName => _user.username ?? "unknown username";
 
   @override
@@ -177,4 +191,10 @@ class WebSocketPlayer implements Player {
       _moveStreamController.sink.add(Cell(data));
     }
   }
+
+  @override
+  String get turnText => "$displayName's turn";
+
+  @override
+  String get winText => "$displayName wins";
 }

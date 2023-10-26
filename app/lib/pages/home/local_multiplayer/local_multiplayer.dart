@@ -42,11 +42,13 @@ class _LocalMultiplayerPageState extends State<LocalMultiplayerPage> {
       playerX: LocalPlayer(
         moveStream: controllerX!.stream,
         playerType: PlayerType.X,
+        gameType: GameType.localMultiplayer,
         internalName: isX ? id.toString() : _otherPlayer,
       ),
       playerO: LocalPlayer(
         moveStream: controllerO!.stream,
         playerType: PlayerType.O,
+        gameType: GameType.localMultiplayer,
         internalName: !isX ? id.toString() : _otherPlayer,
       ),
       gameType: GameType.localMultiplayer,

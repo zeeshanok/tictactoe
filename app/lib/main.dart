@@ -148,26 +148,28 @@ GoRouter getRouter() {
 ThemeData buildTheme(Brightness brightness) {
   final scheme =
       ColorScheme.fromSeed(seedColor: Colors.pink, brightness: brightness);
+  final roundedRect = RoundedRectangleBorder(
+    borderRadius: defaultBorderRadius,
+  );
   return ThemeData.from(colorScheme: scheme, useMaterial3: true).copyWith(
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: defaultBorderRadius),
+        shape: roundedRect,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: defaultBorderRadius,
-        ),
+        shape: roundedRect,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: defaultBorderRadius,
-        ),
+        shape: roundedRect,
       ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(shape: roundedRect),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -207,6 +209,7 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: getRouter(),
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: snackbarKey,
       theme: buildTheme(Brightness.light),
       darkTheme: buildTheme(Brightness.dark),
     );

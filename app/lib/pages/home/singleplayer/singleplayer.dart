@@ -28,6 +28,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
     final l = LocalPlayer(
       moveStream: controller!.stream,
       playerType: localPlayer,
+      gameType: GameType.computer,
       internalName: id.toString(),
     );
     final m = MiniMaxComputerPlayer(playerType: localPlayer.flipped);
