@@ -61,16 +61,21 @@ class CreateUser extends StatelessWidget {
 class CreateUserForm extends StatefulWidget {
   const CreateUserForm({
     super.key,
+    this.onSuccess,
+    this.bio,
+    this.username,
   });
 
+  final void Function()? onSuccess;
+  final String? bio, username;
   @override
   State<CreateUserForm> createState() => _CreateUserFormState();
 }
 
 class _CreateUserFormState extends State<CreateUserForm> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _bioController = TextEditingController();
+  late final _usernameController = TextEditingController(text: widget.username);
+  late final _bioController = TextEditingController(text: widget.bio);
 
   bool _isUsernameLoading = false;
   bool _isSubmitLoading = false;
@@ -89,13 +94,19 @@ class _CreateUserFormState extends State<CreateUserForm> {
     });
   });
 
-  Future<void> onSubmit() async {
+  void onSubmit() {
     setState(() => _isSubmitLoading = true);
-    await GetIt.instance<UserService>().updateCurrentUserInfo(
+    GetIt.instance<UserService>()
+        .updateCurrentUserInfo(
       username: _usernameController.text,
       bio: _bioController.text,
-    );
-    setState(() => _isSubmitLoading = false);
+    )
+        .then((result) {
+      setState(() => _isSubmitLoading = false);
+      if (result == null) {
+        widget.onSuccess?.call();
+      }
+    });
   }
 
   @override
@@ -126,13 +137,14 @@ class _CreateUserFormState extends State<CreateUserForm> {
             style: const TextStyle(fontSize: 30),
             cursorOpacityAnimates: true,
             validator: (value) {
+              if (value == widget.username) return null;
               if (value?.isEmpty ?? false) {
                 return 'Username must not be empty';
               }
               if (!RegExp(r'^[A-Za-z0-9]+$').hasMatch(value!)) {
                 return 'Username must have only letters and numbers';
               }
-              if (_existingUsername == value) {
+              if (value == _existingUsername) {
                 return 'This username is taken';
               }
               return null;
@@ -156,18 +168,22 @@ class _CreateUserFormState extends State<CreateUserForm> {
           ),
           const SizedBox(height: 14),
           FilledButton(
-            onPressed: _isUsernameLoading ||
+            onPressed: _isSubmitLoading ||
+                    _isUsernameLoading ||
                     !(_formKey.currentState?.validate() ?? false)
                 ? null
                 : () async {
                     if (_formKey.currentState!.validate()) {
-                      await onSubmit();
+                      onSubmit();
                     }
                   },
             child: SizedBox(
               height: 20,
               child: _isSubmitLoading
-                  ? const CircularProgressIndicator()
+                  ? const SizedBox(
+                      width: 20,
+                      child: CircularProgressIndicator(),
+                    )
                   : const Text("Continue"),
             ),
           )

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const kMobileThresholdWidth = 600;
+const kMobileThresholdWidth = 1000;
 
 class ResponsiveBuilder extends StatelessWidget {
   const ResponsiveBuilder({

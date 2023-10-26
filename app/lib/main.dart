@@ -7,6 +7,7 @@ import 'package:tictactoe/common/transitions.dart';
 import 'package:tictactoe/pages/home/history/game_history.dart';
 import 'package:tictactoe/pages/home/game_scaffold_with_nav.dart';
 import 'package:tictactoe/pages/home/online/online.dart';
+import 'package:tictactoe/pages/settings/settings.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/create_user/create_user.dart';
@@ -126,6 +127,12 @@ GoRouter getRouter() {
                   state,
                   const OnlinePage(),
                 ),
+              ),
+              GoRoute(
+                path: 'settings',
+                parentNavigatorKey: rootNavKey,
+                pageBuilder: (context, state) =>
+                    slideUpTransition(state, const SettingsPage()),
               )
             ],
           ),
@@ -140,7 +147,7 @@ GoRouter getRouter() {
       GoRoute(
         path: '/create-user',
         builder: (context, state) => const CreateUser(),
-      )
+      ),
     ],
   );
 }
