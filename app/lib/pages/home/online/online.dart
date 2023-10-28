@@ -10,7 +10,7 @@ import 'package:tictactoe/common/widgets/tictactoe_game.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:tictactoe/pages/home/online/create_game.dart';
 import 'package:tictactoe/pages/home/online/join_game.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 class OnlinePage extends StatefulWidget {
   const OnlinePage({super.key});

@@ -5,7 +5,7 @@ import 'package:tictactoe/preferences/preferences.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/services/game_service.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 (List<SingleChildWidget>, void Function()) setupProviders() {
   final prefs = LocalPreferences();

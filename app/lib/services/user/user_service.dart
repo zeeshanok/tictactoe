@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:tictactoe/common/consts.dart';
 import 'package:tictactoe/models/user.dart';
-import 'package:tictactoe/services/uses_auth_service_mixin.dart';
+import 'package:tictactoe/services/user/uses_auth_service_mixin.dart';
 
 /// Service that manages everything user related in the app.
 class UserService extends ChangeNotifier with UsesAuthServiceMixin {

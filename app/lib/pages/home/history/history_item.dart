@@ -10,7 +10,7 @@ import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/ignore_mouse.dart';
 import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
 import 'package:tictactoe/models/game.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 class HistoryItem extends StatelessWidget {
   const HistoryItem({super.key, required this.game});

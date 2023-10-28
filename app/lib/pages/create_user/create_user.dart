@@ -5,7 +5,7 @@ import 'package:tictactoe/common/debouncer.dart';
 import 'package:tictactoe/common/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
 import 'package:tictactoe/models/user.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 class CreateUser extends StatelessWidget {
   const CreateUser({super.key});

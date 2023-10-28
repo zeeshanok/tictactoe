@@ -14,7 +14,7 @@ import 'package:tictactoe/pages/home/settings/settings.dart';
 import 'package:tictactoe/pages/home/singleplayer/singleplayer.dart';
 import 'package:tictactoe/pages/loading.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 GoRouter getRouter() {
   final rootNavKey = GlobalKey<NavigatorState>();

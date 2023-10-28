@@ -7,7 +7,7 @@ import 'package:tictactoe/common/logic/tictactoe.dart';
 import 'package:tictactoe/common/widgets/choose_side.dart';
 import 'package:tictactoe/common/widgets/tictactoe_game.dart';
 import 'package:tictactoe/services/game_service.dart';
-import 'package:tictactoe/services/user_service.dart';
+import 'package:tictactoe/services/user/user_service.dart';
 
 class SinglePlayerPage extends StatefulWidget {
   const SinglePlayerPage({super.key});

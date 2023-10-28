@@ -5,8 +5,8 @@ import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:tictactoe/common/consts.dart';
 import 'package:tictactoe/common/logic/player.dart';
-import 'package:tictactoe/services/user_service.dart';
-import 'package:tictactoe/services/uses_auth_service_mixin.dart';
+import 'package:tictactoe/services/user/user_service.dart';
+import 'package:tictactoe/services/user/uses_auth_service_mixin.dart';
 
 class MultiplayerService with UsesAuthServiceMixin {
   late UserService userService;
