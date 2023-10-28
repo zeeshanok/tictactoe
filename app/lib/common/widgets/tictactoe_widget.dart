@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/common/logic/player.dart';
+import 'package:tictactoe/common/logic/players/player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
 import 'package:tictactoe/common/utils.dart';
 

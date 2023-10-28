@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/common/logic/player.dart';
+import 'package:tictactoe/common/logic/players/player.dart';
 import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
 
 class ChooseSide extends StatelessWidget {

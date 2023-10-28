@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/common/responsive_builder.dart';
+import 'package:tictactoe/common/widgets/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/animated_text.dart';
 import 'package:tictactoe/common/widgets/circular_network_image.dart';
 import 'package:tictactoe/common/widgets/user_widget.dart';

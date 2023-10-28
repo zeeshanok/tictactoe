@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tictactoe/common/logic/player.dart';
+import 'package:tictactoe/common/logic/players/local_player.dart';
+import 'package:tictactoe/common/logic/players/player.dart';
+import 'package:tictactoe/common/logic/players/web_socket_player.dart';
 import 'package:tictactoe/common/logic/tictactoe.dart';
-import 'package:tictactoe/common/responsive_builder.dart';
+import 'package:tictactoe/common/widgets/responsive_builder.dart';
 import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
 import 'package:tictactoe/common/widgets/tictactoe_game.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
