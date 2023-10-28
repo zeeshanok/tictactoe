@@ -36,8 +36,8 @@ class WebSocketPlayer implements Player {
     _websocketChannel.sink.add(move.toString());
   }
 
-  void endGame() {
-    _websocketChannel.sink.add('end');
+  void endGame(MoveList moves) {
+    _websocketChannel.sink.add('end${moves.asNotation}');
   }
 
   @override

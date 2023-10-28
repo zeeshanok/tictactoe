@@ -25,18 +25,26 @@ function handleGame(code: number) {
     const game = gameClients[code]!;
     const players = [game.x!, game.o!];
 
+    const initialTime: Date = new Date();
+
     const closeConnections = () => players.forEach((p) => p.ws.close());
     
+    const endGameGracefully = (finalMoves: string) => {
+        const timeDiff = (new Date()).getSeconds() - initialTime.getSeconds();
+        console.log(`${finalMoves} ${timeDiff}`);
+    };
+
 
     const onPlayerMessage = (index: 0 | 1) => players[index].ws.on('message', (data: RawData) => {
         const msg = data.toString().toLowerCase();
-        if (msg === 'end') {
+        if (msg.startsWith('end')) {
+            const moves = msg.substring('end'.length);
+            endGameGracefully(moves);
             closeConnections();
         }
         players[1 - index].ws.send(msg);
     });
     const onPlayerDisconnect = (index: 0 | 1) => players[index].ws.on('close', () => {
-        console.log(`${players[index].userId} disconnected`);
         players[1 - index].ws.send('disconnect');
         closeConnections();
     })

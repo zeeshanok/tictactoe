@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tictactoe/logic/players/player.dart';
 
 typedef PlayList = List<PlayerType?>;
+typedef MoveList = List<Cell>;
 
 int getMoveCount(PlayList cells) => cells.where((c) => c != null).length;
 
@@ -34,7 +35,7 @@ GameType gameTypeFromName(String name) => switch (name) {
 class TicTacToe extends ChangeNotifier {
   final PlayList cells;
 
-  final List<Cell> moves;
+  final MoveList moves;
 
   final Player playerX, playerO;
 
@@ -127,7 +128,7 @@ class TicTacToe extends ChangeNotifier {
   }
 
   Map<String, dynamic> toMap() => {
-        "moves": Cell.notationFromCellList(moves),
+        "moves": moves.asNotation,
         "type": _gameType.name,
         "playerX": playerX.internalName,
         "playerO": playerO.internalName,
@@ -219,7 +220,7 @@ class Cell {
 
   int get index => y * 3 + x;
 
-  static List<Cell> cellListfromNotation(String notation) {
+  static MoveList cellListfromNotation(String notation) {
     if (notation.length % 2 != 0) {
       throw Exception(
         "text must have an even length to hold valid cell coordinates",
@@ -231,17 +232,11 @@ class Cell {
     ];
   }
 
-  static String notationFromCellList(List<Cell> cells) {
-    return cells.join("");
-  }
-
-  // static String
-
   @override
   String toString() => "$x$y";
 }
 
-extension CellListUtils on List<Cell> {
+extension CellListUtils on MoveList {
   List<PlayerType?> toPlayList() {
     final List<PlayerType?> playList = List.generate(9, (_) => null);
     for (final (i, cell) in indexed) {
@@ -250,6 +245,8 @@ extension CellListUtils on List<Cell> {
     }
     return playList;
   }
+
+  String get asNotation => join("");
 }
 
 abstract class GameResult {}

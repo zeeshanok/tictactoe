@@ -60,7 +60,7 @@ class _OnlinePageState extends State<OnlinePage> {
           // let websocket player get the last move
           oppPlayer.sendMove(game.moves.last);
         } else {
-          oppPlayer.endGame();
+          oppPlayer.endGame(game.moves);
         }
       }
 

@@ -3,7 +3,7 @@ import 'package:tictactoe/models/user.dart';
 
 class TicTacToeGameModel {
   final int id;
-  final List<Cell> moves;
+  final MoveList moves;
   final GameType type;
   final User? playerX, playerO;
 
