@@ -46,7 +46,12 @@ class HomeScaffoldWithNav extends StatelessWidget {
           backgroundColor:
               Theme.of(context).colorScheme.background.withOpacity(0.9),
           surfaceTintColor: Colors.transparent,
-          actions: const [UserWidget(viewMode: UserViewMode.imageOnly)],
+          actions: [
+            UserWidget(
+              viewMode: UserViewMode.imageOnly,
+              onPressed: () => context.go('/settings'),
+            )
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const [
