@@ -28,7 +28,6 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
         .joinGame(int.parse(_controller.text))
         .then((manager) => manager.ready.then((success) {
               if (success) {
-                debugPrint("yes");
                 Navigator.of(context, rootNavigator: true).pop(manager);
               } else {
                 globalNotify("Game not found");

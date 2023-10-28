@@ -63,12 +63,17 @@ class TicTacToe extends ChangeNotifier {
         stopwatch = Stopwatch(),
         _gameType = gameType;
 
-  factory TicTacToe.fromNotation(String notation,
-      {required Player playerX,
-      required Player playerO,
-      required GameType gameType}) {
-    final board =
-        TicTacToe(playerX: playerX, playerO: playerO, gameType: gameType);
+  factory TicTacToe.fromNotation(
+    String notation, {
+    required Player playerX,
+    required Player playerO,
+    required GameType gameType,
+  }) {
+    final board = TicTacToe(
+      playerX: playerX,
+      playerO: playerO,
+      gameType: gameType,
+    );
     final cells = Cell.cellListfromNotation(notation);
     for (final cell in cells) {
       try {
@@ -108,7 +113,8 @@ class TicTacToe extends ChangeNotifier {
     while (getResult() == null) {
       final move = await (currentPlayerType == PlayerType.X ? playerX : playerO)
           .getMove(this);
-      // the wait was cancelled (usually because the user ended the game)
+      // the wait for the next move was cancelled
+      // (usually because the local user ended the game)
       if (move == null) {
         prematureEnd = true;
         break;
@@ -132,6 +138,13 @@ class TicTacToe extends ChangeNotifier {
         PlayerType.X => playerX,
         PlayerType.O => playerO,
       };
+
+  @override
+  void dispose() {
+    playerO.dispose();
+    playerX.dispose();
+    super.dispose();
+  }
 }
 
 /// Returns null if the game is still ongoing otherwise returns the result

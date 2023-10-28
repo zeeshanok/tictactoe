@@ -40,4 +40,7 @@ class LocalPlayer implements Player {
 
     return await _moveStream.firstOrNull;
   }
+
+  @override
+  void dispose() {}
 }

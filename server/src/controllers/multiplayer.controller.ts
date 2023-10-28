@@ -26,19 +26,25 @@ function handleGame(code: number) {
     const players = [game.x!, game.o!];
 
     const closeConnections = () => players.forEach((p) => p.ws.close());
-    const endGame = () => { };
+    
 
-    const onPlayerMessage = (num: 0 | 1) => players[num].ws.on('message', (data: RawData) => {
-        const msg = data.toString();
+    const onPlayerMessage = (index: 0 | 1) => players[index].ws.on('message', (data: RawData) => {
+        const msg = data.toString().toLowerCase();
         if (msg === 'end') {
-            endGame();
             closeConnections();
         }
-        players[1 - num].ws.send(msg);
+        players[1 - index].ws.send(msg);
     });
+    const onPlayerDisconnect = (index: 0 | 1) => players[index].ws.on('close', () => {
+        console.log(`${players[index].userId} disconnected`);
+        players[1 - index].ws.send('disconnect');
+        closeConnections();
+    })
 
     onPlayerMessage(0);
     onPlayerMessage(1);
+    onPlayerDisconnect(0);
+    onPlayerDisconnect(1);
     players[0].ws.send('play');
 }
 
@@ -89,7 +95,7 @@ wss.on('connection', (ws: WebSocket) => {
 controller
 
     .use(requireSessionToken())
-    .post('/', (req: Request, res: Response) => {
+    .post('/', (_req: Request, res: Response) => {
         const gameCode = generateGameCode();
         readyIds.add(gameCode);
         res.send({ gameCode });

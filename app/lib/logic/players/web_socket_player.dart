@@ -18,11 +18,14 @@ class WebSocketPlayer implements Player {
 
   final StreamController<Cell> _moveStreamController;
 
-  WebSocketPlayer(
-      {required User user,
-      required WebSocketChannel channel,
-      required Stream<dynamic> stream})
-      : _user = user,
+  final void Function() onDisconnect;
+
+  WebSocketPlayer({
+    required User user,
+    required WebSocketChannel channel,
+    required Stream<dynamic> stream,
+    required this.onDisconnect,
+  })  : _user = user,
         _websocketStream = stream,
         _websocketChannel = channel,
         _moveStreamController = StreamController.broadcast() {
@@ -54,6 +57,8 @@ class WebSocketPlayer implements Player {
   void _handleStreamEvent(String data) {
     if (data.length == 2 && int.tryParse(data) != null) {
       _moveStreamController.sink.add(Cell(data));
+    } else if (data.toLowerCase() == 'disconnect') {
+      onDisconnect();
     }
   }
 
@@ -62,4 +67,9 @@ class WebSocketPlayer implements Player {
 
   @override
   String get winText => "$displayName wins";
+
+  @override
+  void dispose() {
+    _websocketChannel.sink.close();
+  }
 }

@@ -74,4 +74,7 @@ class MiniMaxComputerPlayer implements Player {
 
   @override
   String get winText => "Computer wins(${playerType.name})";
+
+  @override
+  void dispose() {}
 }

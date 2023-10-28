@@ -4,7 +4,11 @@ import 'package:tictactoe/widgets/animated_text.dart';
 import 'package:tictactoe/widgets/tictactoe_widget.dart';
 
 class TicTacToeGame extends StatefulWidget {
-  const TicTacToeGame({super.key, required this.game, required this.onPlay});
+  const TicTacToeGame({
+    super.key,
+    required this.game,
+    required this.onPlay,
+  });
 
   final TicTacToe game;
   final void Function(Cell)? onPlay;

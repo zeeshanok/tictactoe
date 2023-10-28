@@ -19,4 +19,6 @@ abstract class Player {
 
   /// Get player's next move given the current state of the board
   Future<Cell?> getMove(TicTacToe board);
+
+  void dispose();
 }

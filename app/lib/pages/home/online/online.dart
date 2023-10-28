@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/logic/players/local_player.dart';
 import 'package:tictactoe/logic/players/player.dart';
 import 'package:tictactoe/logic/players/web_socket_player.dart';
@@ -25,16 +27,23 @@ class _OnlinePageState extends State<OnlinePage> {
   TicTacToe? game;
   StreamController<Cell>? controller;
 
+  void onWebSocketPlayerDisconnect() {
+    context.pop();
+    globalNotify("Your opponent disconnected");
+  }
+
   void createGame(MultiplayerGameManager manager) async {
     final users = GetIt.instance<UserService>();
     final opponent = await users.fetchUserById(manager.opponentUserId!);
     final currentUser = users.currentUser!;
+
     if (opponent != null) {
       controller = StreamController();
       final oppPlayer = WebSocketPlayer(
         user: opponent,
         channel: manager.channel,
         stream: manager.stream,
+        onDisconnect: onWebSocketPlayerDisconnect,
       );
 
       final localPlayer = LocalPlayer(
@@ -43,22 +52,28 @@ class _OnlinePageState extends State<OnlinePage> {
         gameType: GameType.online,
         internalName: currentUser.id.toString(),
       );
+
       final isX = manager.currentUserSide == PlayerType.X;
+
+      void onGameEnd(TicTacToe game) {
+        if (game.currentPlayer is WebSocketPlayer) {
+          // let websocket player get the last move
+          oppPlayer.sendMove(game.moves.last);
+        } else {
+          oppPlayer.endGame();
+        }
+      }
+
       setState(() => game = TicTacToe(
             playerX: isX ? localPlayer : oppPlayer,
             playerO: isX ? oppPlayer : localPlayer,
             gameType: GameType.localMultiplayer,
-            onGameEnd: (game) {
-              if (game.currentPlayer is WebSocketPlayer) {
-                // let websocket player get the last move
-                oppPlayer.sendMove(game.moves.last);
-              } else {
-                oppPlayer.endGame();
-              }
-            },
+            onGameEnd: onGameEnd,
           ));
+
       game!.startGame();
     }
+    // we don't need this anymore
     manager.stopListening();
   }
 
@@ -83,10 +98,20 @@ class _OnlinePageState extends State<OnlinePage> {
     }
   }
 
+  void Function() createGameWrapper(Widget child) => () async {
+        final result = await showDialog(
+          context: context,
+          builder: (context) => child,
+        );
+        if (result is MultiplayerGameManager) {
+          createGame(result);
+        }
+      };
+
   Widget buildPreGame(BuildContext context) {
     return JoinOrCreateGame(
-      onCreate: doCreateGame,
-      onJoin: doJoinGame,
+      onCreate: createGameWrapper(const CreateGameDialog()),
+      onJoin: createGameWrapper(const JoinGameDialog()),
     );
   }
 
@@ -108,6 +133,13 @@ class _OnlinePageState extends State<OnlinePage> {
                   },
                 ),
         )));
+  }
+
+  @override
+  void dispose() {
+    controller?.close();
+    game?.dispose();
+    super.dispose();
   }
 }
 
