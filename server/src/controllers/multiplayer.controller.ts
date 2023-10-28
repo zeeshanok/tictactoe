@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express";
 import { requireSessionToken } from "./common";
 import { randomInt } from "crypto";
 import { RawData, WebSocket, WebSocketServer } from "ws";
+import { Game } from "../database/entities/game.entity";
+import { useTypeOrm } from "../database/typeorm";
 
 const controller = Router();
 
@@ -17,8 +19,12 @@ const readyIds = new Set<number>([112233]);
 function generateGameCode() {
     let id;
     do { id = randomInt(100_000, 1_000_000); }
-    while (gameClients[id] != undefined);
+    while (gameClients[id] != undefined || readyIds.has(id));
     return id;
+}
+
+async function createGame(game: Partial<Game>) {
+    await useTypeOrm(Game).save({ ...game, type: 'online' });
 }
 
 function handleGame(code: number) {
@@ -28,10 +34,15 @@ function handleGame(code: number) {
     const initialTime: Date = new Date();
 
     const closeConnections = () => players.forEach((p) => p.ws.close());
-    
-    const endGameGracefully = (finalMoves: string) => {
-        const timeDiff = (new Date()).getSeconds() - initialTime.getSeconds();
-        console.log(`${finalMoves} ${timeDiff}`);
+
+    const endGameGracefully = (moves: string) => {
+        const timePlayed = (new Date()).getSeconds() - initialTime.getSeconds();
+        createGame({
+            moves,
+            timePlayed,
+            playerX: players[0].userId.toString(),
+            playerO: players[1].userId.toString(),
+        });
     };
 
 
@@ -47,7 +58,7 @@ function handleGame(code: number) {
     const onPlayerDisconnect = (index: 0 | 1) => players[index].ws.on('close', () => {
         players[1 - index].ws.send('disconnect');
         closeConnections();
-    })
+    });
 
     onPlayerMessage(0);
     onPlayerMessage(1);
@@ -57,37 +68,40 @@ function handleGame(code: number) {
 }
 
 wss.on('connection', (ws: WebSocket) => {
-    console.log('incoming connection');
     ws.once('message', (data: RawData) => {
-        console.log(`incoming message ${data.toString()}`);
 
         // {game code}{player type?}{user id}
         // example 112233o3 (game code: 112233, player type: o, user id: 3)
+        // a player type isn't expected when a user is joining an existing game 
+        // occupied by one other user.
         const parts = data.toString().toLowerCase().match(/^(\d{6})([xo]?)(\d+)$/)?.slice(1);
+
         if (parts !== undefined && parts[2] !== undefined) {
+
             const code = Number.parseInt(parts[0]);
             const userId = Number.parseInt(parts[2]);
-            const idPair: UserIdWebSocketPair = { userId, ws };
+            const pair: UserIdWebSocketPair = { userId, ws };
+
             if (readyIds.has(code)) {
                 // starting the wait for an opponent player
                 readyIds.delete(code);
                 gameClients[code] = {};
-                gameClients[code][parts[1] as 'x' | 'o'] = idPair;
-                console.log('created new game');
+                gameClients[code][parts[1] as 'x' | 'o'] = pair;
                 return;
+
             } else if (gameClients[code] !== undefined) {
                 // we are the opponent player
                 const message = `youare${userId}`;
                 if (!gameClients[code].x) {
-                    gameClients[code].x = idPair;
+                    gameClients[code].x = pair;
                     const o = gameClients[code].o!;
                     o.ws.send(`${message}o`);
-                    idPair.ws.send(`youare${o.userId}x`);
+                    pair.ws.send(`youare${o.userId}x`);
                 } else {
-                    gameClients[code].o = idPair;
+                    gameClients[code].o = pair;
                     const x = gameClients[code].x!;
                     x.ws.send(`${message}x`);
-                    idPair.ws.send(`youare${x.userId}o`);
+                    pair.ws.send(`youare${x.userId}o`);
                 }
                 handleGame(code);
                 return;
