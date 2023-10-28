@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
+import 'package:tictactoe/logic/players/player.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:tictactoe/common/consts.dart';

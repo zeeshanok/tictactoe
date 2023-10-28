@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
-import 'package:tictactoe/common/widgets/animated_text.dart';
-import 'package:tictactoe/common/widgets/tictactoe_widget.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
+import 'package:tictactoe/widgets/animated_text.dart';
+import 'package:tictactoe/widgets/tictactoe_widget.dart';
 
 class TicTacToeGame extends StatefulWidget {
   const TicTacToeGame({super.key, required this.game, required this.onPlay});

@@ -1,6 +1,6 @@
 import 'package:async/async.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/players/player.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 
 class LocalPlayer implements Player {
   /// Stream of moves that the local player plays.

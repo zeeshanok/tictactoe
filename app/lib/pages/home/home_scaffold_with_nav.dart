@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/common/widgets/responsive_builder.dart';
-import 'package:tictactoe/common/widgets/animated_text.dart';
-import 'package:tictactoe/common/widgets/circular_network_image.dart';
-import 'package:tictactoe/common/widgets/user_widget.dart';
+import 'package:tictactoe/widgets/labeled_icon_button.dart';
+import 'package:tictactoe/widgets/responsive_builder.dart';
+import 'package:tictactoe/widgets/circular_network_image.dart';
+import 'package:tictactoe/widgets/user_widget.dart';
 import 'package:tictactoe/services/user/user_service.dart';
 
 class HomeScaffoldWithNav extends StatelessWidget {
@@ -134,25 +134,13 @@ class NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: TextButton.icon(
-        onPressed: () => context.go(path),
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.all(20),
-          minimumSize: const Size(60, 0),
-          alignment: Alignment.centerLeft,
-          backgroundColor: path == selectedPath
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
-              : Theme.of(context).colorScheme.background,
-          foregroundColor: Theme.of(context).colorScheme.onBackground,
-        ),
-        icon: icon,
-        label: AnimatedText(
-          name,
-          style: const TextStyle(fontSize: 16),
-        ),
-      ),
+    return LabeledIconButton(
+      icon: icon,
+      text: name,
+      onPressed: () => context.go(path),
+      backgroundColor: path == selectedPath
+          ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+          : Theme.of(context).colorScheme.background,
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 import 'package:tictactoe/models/user.dart';
 
 class TicTacToeGameModel {

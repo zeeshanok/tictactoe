@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 
 enum PlayerType { O, X }
 

@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/players/player.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 
 class MiniMaxComputerPlayer implements Player {
   /// The player type assigned to us

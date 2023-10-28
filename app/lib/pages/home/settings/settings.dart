@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/common/widgets/responsive_builder.dart';
+import 'package:tictactoe/widgets/responsive_builder.dart';
 import 'package:tictactoe/common/utils.dart';
-import 'package:tictactoe/common/widgets/circular_network_image.dart';
+import 'package:tictactoe/widgets/circular_network_image.dart';
 import 'package:tictactoe/pages/create_user.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
 import 'package:tictactoe/services/user/user_service.dart';

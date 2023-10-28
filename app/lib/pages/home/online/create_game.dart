@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:tictactoe/common/widgets/choose_side.dart';
-import 'package:tictactoe/common/widgets/copyable_text.dart';
-import 'package:tictactoe/common/widgets/default_dialog.dart';
-import 'package:tictactoe/common/widgets/loading.dart';
+import 'package:tictactoe/widgets/choose_side.dart';
+import 'package:tictactoe/widgets/copyable_text.dart';
+import 'package:tictactoe/widgets/default_dialog.dart';
+import 'package:tictactoe/widgets/loading.dart';
 import 'package:tictactoe/managers/multiplayer_game.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
 

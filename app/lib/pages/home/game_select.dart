@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
-import 'package:tictactoe/common/widgets/responsive_builder.dart';
-import 'package:tictactoe/common/widgets/labelled_outlined_button.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
+import 'package:tictactoe/widgets/responsive_builder.dart';
+import 'package:tictactoe/widgets/labeled_outlined_button.dart';
 
 class GameSelectPage extends StatelessWidget {
   const GameSelectPage({super.key});

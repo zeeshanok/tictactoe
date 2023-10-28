@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
+import 'package:tictactoe/logic/players/player.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 final _joinedPattern = RegExp(r'^youare(\d+)(x|o)$');

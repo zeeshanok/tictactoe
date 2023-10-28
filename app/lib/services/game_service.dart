@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:tictactoe/common/consts.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 import 'package:tictactoe/models/game.dart';
 import 'package:tictactoe/models/user.dart';
 import 'package:tictactoe/services/user/user_service.dart';

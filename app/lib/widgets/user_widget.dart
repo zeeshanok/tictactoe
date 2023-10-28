@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/common/widgets/animated_text.dart';
-import 'package:tictactoe/common/widgets/circular_network_image.dart';
+import 'package:tictactoe/widgets/animated_text.dart';
+import 'package:tictactoe/widgets/circular_network_image.dart';
 import 'package:tictactoe/models/user.dart';
 import 'package:tictactoe/services/user/user_service.dart';
 

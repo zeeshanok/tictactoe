@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
-import 'package:tictactoe/common/logic/tictactoe.dart';
+import 'package:tictactoe/logic/players/player.dart';
+import 'package:tictactoe/logic/tictactoe.dart';
 import 'package:tictactoe/common/utils.dart';
 
 class TicTacToeBoard extends StatelessWidget {

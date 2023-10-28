@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tictactoe/common/utils.dart';
-import 'package:tictactoe/common/widgets/default_dialog.dart';
+import 'package:tictactoe/widgets/default_dialog.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
 
 class JoinGameDialog extends StatefulWidget {

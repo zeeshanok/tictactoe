@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
-import 'package:tictactoe/common/widgets/loading.dart';
+import 'package:tictactoe/widgets/loading.dart';
 import 'package:tictactoe/models/game.dart';
 import 'package:tictactoe/pages/home/history/history_item.dart';
 import 'package:tictactoe/services/game_service.dart';

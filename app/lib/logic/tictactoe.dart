@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:tictactoe/common/logic/players/player.dart';
+import 'package:tictactoe/logic/players/player.dart';
 
 typedef PlayList = List<PlayerType?>;
 
