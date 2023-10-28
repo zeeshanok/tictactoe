@@ -43,17 +43,25 @@ class HistoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // smooth scrolling
-    return DynMouseScroll(
-      builder: (context, controller, physics) {
-        return ListView.separated(
-          controller: controller,
-          physics: physics,
-          itemBuilder: (context, index) => HistoryItem(game: games[index]),
-          separatorBuilder: (context, index) => const SizedBox(height: 6),
-          itemCount: games.length,
-        );
-      },
-    ).animate().fadeIn();
+    return Column(
+      children: [
+        Text("${games.length} games in total"),
+        Expanded(
+          child: DynMouseScroll(
+            builder: (context, controller, physics) {
+              return ListView.separated(
+                controller: controller,
+                physics: physics,
+                itemBuilder: (context, index) =>
+                    HistoryItem(game: games[index]),
+                separatorBuilder: (context, index) => const SizedBox(height: 6),
+                itemCount: games.length,
+              );
+            },
+          ).animate().fadeIn(),
+        ),
+      ],
+    );
   }
 }
 

@@ -5,6 +5,10 @@ import { Session } from '../database/entities/session.entity';
 import { useTypeOrm } from '../database/typeorm';
 import { getSessionToken } from '../utils';
 import { User } from '../database/entities/user.entity';
+import { Game } from '../database/entities/game.entity';
+import { FindOptionsWhere } from 'typeorm';
+
+const maxGamesStoredPerUser = 20;
 
 const users: { [id: number]: Auth.OAuth2Client; } = {};
 
@@ -78,4 +82,51 @@ export function requireSessionToken() {
         }
         next();
     };
+}
+
+
+
+/**
+ * Add a game to a database (and optionally purge it)
+ * @param game the game to add the database
+ * @param req if not null, this request will be used to extract the current user's id and purge that user's games
+ */
+export async function addGame(game: Partial<Game>, req?: Request) {
+    await useTypeOrm(Game).save(game);
+
+    if (req) {
+        const user = await getUserFromToken(req);
+        await purgeGames(user!.id);
+    }
+}
+
+export async function getGamesByUserId(userId: number, options?: FindOptionsWhere<Game>[]) {
+    const conditions = [
+        { playerO: userId.toString() },
+        // or
+        { playerX: userId.toString() },
+        ...(options ?? [])
+    ];
+
+    return await useTypeOrm(Game).find({
+        where: conditions,
+        order: { createdAt: 'DESC' }
+    });
+}
+
+export async function purgeGames(userId: number) {
+    // this query looks weird because of how sqlite is.
+    // see (https://stackoverflow.com/a/10812989)
+    const query = `
+    DELETE FROM game WHERE (playerX=? OR playerO=?) AND id NOT IN
+        (
+            SELECT id FROM
+            (SELECT * FROM game WHERE playerX=? OR playerO=? ORDER BY createdAt DESC LIMIT ?)
+            UNION
+            SELECT id FROM 
+            (SELECT * from game WHERE (playerX=? OR playerO=?) AND (starred=1))
+        )`;
+    await useTypeOrm(Game).query(query, [
+        userId, userId, userId, userId, maxGamesStoredPerUser, userId, userId
+    ]);
 }

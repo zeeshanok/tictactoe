@@ -1,27 +1,7 @@
 import express, { Request, Response, Router } from "express";
-import { getUserFromToken, requireSessionToken } from "./common";
+import { addGame, getGamesByUserId, getUserFromToken, requireSessionToken } from "./common";
 import { useTypeOrm } from "../database/typeorm";
 import { Game } from "../database/entities/game.entity";
-import { FindOptionsWhere } from "typeorm";
-
-const maxGamesStoredPerUser = 20;
-
-async function addGame(game: Partial<Game>) {
-    await useTypeOrm(Game).save(game);
-}
-async function getGamesByUserId(userId: number, options?: FindOptionsWhere<Game>[]) {
-    const conditions = [
-            { playerO: userId.toString() },
-            // or
-            { playerX: userId.toString() },
-            ...(options ?? [])
-        ];
-        
-    return await useTypeOrm(Game).find({
-        where: conditions,
-        order: { createdAt: 'DESC' }
-    });
-}
 
 const controller = Router();
 
@@ -63,12 +43,11 @@ controller
             return;
         }
 
-        await addGame(game);
+        await addGame(game, req);
 
         res.sendStatus(200);
-    })
 
+    });
 
-setTimeout(() => { }, 1000 * 60);
 
 export default controller;
