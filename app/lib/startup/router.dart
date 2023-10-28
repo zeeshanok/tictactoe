@@ -14,6 +14,7 @@ import 'package:tictactoe/pages/home/settings/settings.dart';
 import 'package:tictactoe/pages/home/singleplayer/singleplayer.dart';
 import 'package:tictactoe/pages/loading.dart';
 import 'package:tictactoe/services/auth/auth_service.dart';
+import 'package:tictactoe/services/server_status_service.dart';
 import 'package:tictactoe/services/user/user_service.dart';
 
 GoRouter getRouter() {
@@ -24,13 +25,15 @@ GoRouter getRouter() {
     refreshListenable: CombineChangeNotifiers([
       GetIt.instance<UserService>(),
       GetIt.instance<AuthService>(),
+      GetIt.instance<ServerStatusService>(),
     ]),
     redirectLimit: 12,
     redirect: (context, state) {
+      final isServerAlive = GetIt.instance<ServerStatusService>().isAlive;
       final auth = GetIt.instance<AuthService>();
       final currentUser = GetIt.instance<UserService>().currentUser;
 
-      if (!auth.isInitialised) return '/loading';
+      if (!isServerAlive || !auth.isInitialised) return '/loading';
       if (!auth.isAuthed) return '/authenticate';
       if (currentUser != null && currentUser.username == null) {
         return '/create-user';

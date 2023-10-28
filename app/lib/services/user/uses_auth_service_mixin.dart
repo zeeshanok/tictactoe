@@ -7,6 +7,8 @@ mixin UsesAuthServiceMixin {
   late LocalPreferences preferences;
   late AuthService authService;
 
+  bool _wasAuthed = false;
+
   final dio = Dio(BaseOptions(
     validateStatus: (status) => true,
   ));
@@ -25,10 +27,12 @@ mixin UsesAuthServiceMixin {
     if (authService.isAuthed) {
       dio.options.headers['authorization'] =
           "Bearer ${preferences.sessionToken}";
-      onIsAuthed();
+      if (!_wasAuthed) onIsAuthed();
+      _wasAuthed = true;
     } else {
       dio.options.headers.remove('authorization');
       onIsUnauthed();
+      _wasAuthed = false;
     }
   }
 

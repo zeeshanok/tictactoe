@@ -8,9 +8,14 @@ import { getGoogleUserInfo, getSessionFromToken, getUserById, getUserFromToken, 
  * @param userId id of the user who's profile url to update
  */
 async function updateProfileUrl(userId: number) {
-    const { picture } = await getGoogleUserInfo(userId);
-    if (picture) {
-        await useTypeOrm(User).update({ id: userId }, { profileUrl: picture });
+    try {
+
+        const { picture } = await getGoogleUserInfo(userId);
+        if (picture) {
+            await useTypeOrm(User).update({ id: userId }, { profileUrl: picture });
+        }
+    } catch {
+        console.error(`failed to update user profile pic: ${userId}`);
     }
 }
 

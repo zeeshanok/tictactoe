@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tictactoe/common/consts.dart';
 import 'package:tictactoe/services/auth/windows_auth_code_receiver.dart';
 import 'package:tictactoe/preferences/preferences.dart';
+import 'package:tictactoe/services/server_status_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final _dio = Dio(BaseOptions(baseUrl: serverUrl()));
@@ -67,17 +68,19 @@ abstract class AuthService extends ChangeNotifier {
   Future<void> signOut();
 
   /// To be called when the app is ready to listen to auth changets
-  Future<void> start();
+  Future<void> initialise();
 }
 
 /// `AuthService` that launches an OAuth window on the users default browser
 /// to authenticate with the server.
 class WindowsAuthService extends ChangeNotifier implements AuthService {
   late LocalPreferences _prefs;
+  late ServerStatusService _status;
 
   @override
   bool get isAuthed => _isAuthed;
   void _setIsAuthed(bool val) {
+    if (val == _isAuthed) return;
     _isAuthed = val;
     if (_isAuthed) {
       _dio.options.headers['authorization'] = "Bearer ${_prefs.sessionToken}";
@@ -90,6 +93,7 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
   @override
   bool get isInitialised => _isInitialised;
   void _setIsInitialised(bool val) {
+    if (val == _isInitialised) return;
     _isInitialised = val;
     notifyListeners();
   }
@@ -101,12 +105,21 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
         _isInitialised = false;
 
   @override
-  Future<void> start() async {
+  Future<void> initialise() async {
     _prefs = GetIt.instance<LocalPreferences>();
-    if (await _attemptSessionLogin()) {
-      _setIsAuthed(true);
+    _status = GetIt.instance<ServerStatusService>();
+    _status.addListener(onServerStatusChange);
+  }
+
+  void onServerStatusChange() async {
+    if (_status.isAlive) {
+      if (await _attemptSessionLogin()) {
+        _setIsAuthed(true);
+      }
+      _setIsInitialised(true);
+    } else {
+      _setIsAuthed(false);
     }
-    _setIsInitialised(true);
   }
 
   @override
@@ -142,6 +155,8 @@ class WindowsAuthService extends ChangeNotifier implements AuthService {
 /// and Google's silent sign in on web.
 class AndroidWebAuthService extends ChangeNotifier implements AuthService {
   late LocalPreferences _prefs;
+  late ServerStatusService _status;
+
   @override
   bool get isAuthed => _isAuthed;
   void _setIsAuthed(bool val) {
@@ -170,22 +185,32 @@ class AndroidWebAuthService extends ChangeNotifier implements AuthService {
         _isInitialised = false;
 
   @override
-  Future<void> start() async {
+  Future<void> initialise() async {
     _prefs = GetIt.instance<LocalPreferences>();
-    if (await _attemptSessionLogin()) {
-      _setIsAuthed(true);
-    } else {
-      final acc = await googleSignIn.signInSilently();
-      if (acc != null) {
-        final token =
-            await _getSessionToken((await acc.authentication).accessToken!);
+    _status = GetIt.instance<ServerStatusService>();
 
-        if (token != null) {
-          _setIsAuthed(true);
+    _status.addListener(onServerStatusChange);
+  }
+
+  void onServerStatusChange() async {
+    if (_status.isAlive) {
+      if (await _attemptSessionLogin()) {
+        _setIsAuthed(true);
+      } else {
+        final acc = await googleSignIn.signInSilently();
+        if (acc != null) {
+          final token =
+              await _getSessionToken((await acc.authentication).accessToken!);
+
+          if (token != null) {
+            _setIsAuthed(true);
+          }
         }
       }
+      _setIsInitialised(true);
+    } else {
+      _setIsAuthed(false);
     }
-    _setIsInitialised(true);
   }
 
   @override

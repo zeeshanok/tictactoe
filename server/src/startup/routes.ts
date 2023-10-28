@@ -10,6 +10,8 @@ function setupRoutes(app: Express) {
     app.use('/users', users);
     app.use('/games', games);
     app.use('/multiplayer', multiplayer);
+
+    app.get('/status', (req, res) => res.sendStatus(200));
 }
 
 export default setupRoutes;
