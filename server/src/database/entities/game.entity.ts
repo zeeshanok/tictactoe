@@ -35,4 +35,7 @@ export class Game {
      */
     @Column("text", { nullable: true })
     playerO!: string | null;
+
+    @Column({ default: false })
+    starred!: boolean;
 }
