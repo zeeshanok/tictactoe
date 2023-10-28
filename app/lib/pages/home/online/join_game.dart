@@ -71,7 +71,7 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
                         }
                       },
                       placeholderBuilder: (context, _) =>
-                          Center(child: Icon(Icons.camera_alt_rounded)),
+                          const Center(child: Icon(Icons.camera_alt_rounded)),
                     ),
                   ),
                 ),
