@@ -75,7 +75,7 @@ class GameDetails extends StatelessWidget {
   String getWinText(PlayerType winner) {
     final user = GetIt.instance<UserService>().currentUser!;
     if ((winner == PlayerType.X && game.playerX == user) ||
-        (winner == PlayerType.X && game.playerO == user)) {
+        (winner == PlayerType.O && game.playerO == user)) {
       return "You won";
     }
     return "You lost";
