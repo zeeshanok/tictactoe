@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/common/widgets/default_dialog.dart';
 import 'package:tictactoe/services/multiplayer_service.dart';
@@ -15,6 +17,7 @@ class JoinGameDialog extends StatefulWidget {
 
 class _JoinGameDialogState extends State<JoinGameDialog> {
   final _controller = TextEditingController();
+  final _scannerController = MobileScannerController(returnImage: false);
   bool _enabled = false;
 
   void onSubmit() {
@@ -45,6 +48,34 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
           children: [
             const Text("Enter game code", style: TextStyle(fontSize: 30)),
             const SizedBox(height: 16),
+            if (defaultTargetPlatform == TargetPlatform.android)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: SizedBox(
+                  height: 220,
+                  child: ClipRRect(
+                    borderRadius: defaultBorderRadius,
+                    child: MobileScanner(
+                      controller: _scannerController,
+                      onDetect: (capture) {
+                        for (final barcode in capture.barcodes) {
+                          if (barcode.rawValue != null) {
+                            final match = RegExp(r'^ttt-(\d{6})$')
+                                .firstMatch(barcode.rawValue!);
+                            final digits = match?.group(1);
+                            if (digits != null) {
+                              _controller.text = digits;
+                              onSubmit();
+                            }
+                          }
+                        }
+                      },
+                      placeholderBuilder: (context, _) =>
+                          Center(child: Icon(Icons.camera_alt_rounded)),
+                    ),
+                  ),
+                ),
+              ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -95,6 +126,7 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
   @override
   void dispose() {
     _controller.dispose();
+    _scannerController.dispose();
     super.dispose();
   }
 }

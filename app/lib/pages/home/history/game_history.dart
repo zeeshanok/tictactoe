@@ -11,6 +11,7 @@ class GameHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: show something when the user has no games
     return Container(
       color: Theme.of(context).colorScheme.background,
       child: FutureBuilder(
