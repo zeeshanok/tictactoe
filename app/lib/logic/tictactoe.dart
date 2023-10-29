@@ -91,7 +91,7 @@ class TicTacToe extends ChangeNotifier {
     final index = cell.index;
 
     if (cells[index] != null) {
-      throw FilledCellException(cell.toString());
+      return;
     }
 
     cells[index] = currentPlayerType;

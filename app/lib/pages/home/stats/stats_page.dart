@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
-import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/pages/home/stats/stats_header.dart';
 import 'package:tictactoe/widgets/loading.dart';
 import 'package:tictactoe/models/game.dart';
