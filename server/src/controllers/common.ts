@@ -123,10 +123,10 @@ export async function purgeGames(userId: number) {
             SELECT id FROM
             (SELECT * FROM game WHERE playerX=? OR playerO=? ORDER BY createdAt DESC LIMIT ?)
             UNION
-            SELECT id FROM 
-            (SELECT * from game WHERE (playerX=? OR playerO=?) AND (starred=1))
+            SELECT gameId FROM 
+            (SELECT * from star WHERE userId=?)
         )`;
     await useTypeOrm(Game).query(query, [
-        userId, userId, userId, userId, maxGamesStoredPerUser, userId, userId
+       userId, userId, userId, userId, maxGamesStoredPerUser, userId
     ]);
 }

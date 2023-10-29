@@ -1,13 +1,18 @@
 import express, { Request, Response, Router } from "express";
-import { addGame, getGamesByUserId, getUserFromToken, requireSessionToken } from "./common";
+import { addGame, getGamesByUserId, getUserFromToken } from "./common";
 import { useTypeOrm } from "../database/typeorm";
 import { Game } from "../database/entities/game.entity";
-import { And, Brackets } from "typeorm";
 import { Star } from "../database/entities/star.entity";
+
+const maxStarCount = 10;
 
 async function toggleStar(starred: boolean, gameId: number, userId: number) {
     const options = { game: { id: gameId }, user: { id: userId } };
     if (starred) {
+        const count = await useTypeOrm(Star).countBy({ user: { id: userId } });
+        if (count >= maxStarCount) {
+            return false;
+        }
         await useTypeOrm(Star).createQueryBuilder("star")
             .insert()
             .orIgnore()
@@ -17,17 +22,7 @@ async function toggleStar(starred: boolean, gameId: number, userId: number) {
     } else {
         await useTypeOrm(Star).delete(options);
     }
-    // return await useTypeOrm(Game)
-    //     .createQueryBuilder("game")
-    //     .update(Game)
-    //     .set({ starred })
-    //     .where("game.id = :gameId", { gameId })
-    //     .andWhere(new Brackets((qb) =>
-    //         qb
-    //             .where("game.playerX = :userId", { userId })
-    //             .orWhere("game.playerO = :userId", { userId }))
-    //     )
-    //     .execute();
+    return true;
 }
 
 
@@ -43,7 +38,11 @@ function createStarRoute(starred: boolean) {
         const user = await getUserFromToken(req);
         if (!user) res.sendStatus(401);
         else {
-            await toggleStar(starred, Number.parseInt(id), user.id);
+            const result = await toggleStar(starred, Number.parseInt(id), user.id);
+            if (!result && starred) {
+                res.status(400).send(`You cannot star more than ${maxStarCount} games`);
+                return;
+            }
             res.sendStatus(200);
         }
     };

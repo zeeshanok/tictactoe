@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tictactoe/logic/players/player.dart';
 import 'package:tictactoe/logic/tictactoe.dart';
+import 'package:tictactoe/services/game_service.dart';
 import 'package:tictactoe/widgets/responsive_builder.dart';
 import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/widgets/animated_text.dart';
@@ -46,7 +48,10 @@ class HistoryItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            GameDetails(game: game),
+            Expanded(
+                child: GameDetails(
+              game: game,
+            )),
           ],
         ),
       ),
@@ -55,7 +60,10 @@ class HistoryItem extends StatelessWidget {
 }
 
 class GameDetails extends StatelessWidget {
-  const GameDetails({super.key, required this.game});
+  const GameDetails({
+    super.key,
+    required this.game,
+  });
 
   final TicTacToeGameModel game;
 
@@ -83,24 +91,42 @@ class GameDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gameService = context.watch<GameService>();
+    final isStarred = gameService.currentUserStarSet.contains(game.id);
     final format = DateFormat('hh:mm a, d MMMM');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FutureBuilder(
-            future: getResultText(),
-            builder: (context, snapshot) {
-              return AnimatedText(
-                snapshot.data ?? "",
-                style: TextStyle(
-                  fontSize: responsiveValue(
-                    context,
-                    mobileValue: 34,
-                    desktopValue: 40,
-                  ),
-                ),
-              );
-            }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FutureBuilder(
+                future: getResultText(),
+                builder: (context, snapshot) {
+                  return AnimatedText(
+                    snapshot.data ?? "",
+                    style: TextStyle(
+                      fontSize: responsiveValue(
+                        context,
+                        mobileValue: 30,
+                        desktopValue: 40,
+                      ),
+                    ),
+                  );
+                }),
+            IconButton(
+              icon: Icon(
+                isStarred ? Icons.star_rounded : Icons.star_border_rounded,
+                color:
+                    isStarred ? Theme.of(context).colorScheme.tertiary : null,
+              ),
+              onPressed: () {
+                gameService.toggleStar(game.id, !isStarred);
+              },
+            )
+          ],
+        ),
         Text('Play time: ${formatDuration(game.timePlayed, showSeconds: true)}',
             style: TextStyle(
               fontSize: responsiveValue(
@@ -128,11 +154,8 @@ class GameDetails extends StatelessWidget {
           )
         ])),
         const Spacer(),
-        Align(
-          alignment: Alignment.bottomRight,
-          // convert from utc time to local
-          child: Text(format.format(game.createdAt.toLocal())),
-        ),
+        // convert from utc time to local
+        Text(format.format(game.createdAt.toLocal())),
       ],
     );
   }

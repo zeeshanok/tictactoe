@@ -19,8 +19,8 @@ class TicTacToeGameModel {
     required this.playerOName,
     required this.moves,
     required this.type,
-    this.playerX,
-    this.playerO,
     required this.timePlayed,
+    this.playerO,
+    this.playerX,
   });
 }

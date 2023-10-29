@@ -29,7 +29,7 @@ import 'package:tictactoe/services/user/user_service.dart';
           create: (context) => serverStatus),
       ChangeNotifierProvider<AuthService>(create: (context) => auth),
       ChangeNotifierProvider<UserService>(create: (context) => user),
-      Provider<GameService>(create: (context) => game),
+      ChangeNotifierProvider<GameService>(create: (context) => game),
       Provider<MultiplayerService>(create: (context) => multiplayer),
     ],
     () async {
