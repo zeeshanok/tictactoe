@@ -49,7 +49,7 @@ class HomeScaffoldWithNav extends StatelessWidget {
           actions: [
             UserWidget(
               viewMode: UserViewMode.imageOnly,
-              onPressed: () => context.go('/settings'),
+              onPressed: () => context.push('/settings'),
             )
           ],
         ),
@@ -76,7 +76,9 @@ class HomeScaffoldWithNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        mobileBuilder: buildMobileLayout, desktopBuilder: buildDesktopLayout);
+      mobileBuilder: buildMobileLayout,
+      desktopBuilder: buildDesktopLayout,
+    );
   }
 
   final Map<String, int> indexMap = {'/': 0, '/stats': 1};
@@ -118,6 +120,7 @@ class NavRail extends StatelessWidget {
         NavItem(
           name: user?.username ?? "",
           path: '/settings',
+          push: true,
           icon: CircularNetworkImage(
             imageUrl: user?.profileUrl,
             radius: 18,
@@ -136,17 +139,19 @@ class NavItem extends StatelessWidget {
     required this.path,
     required this.icon,
     required this.selectedPath,
+    this.push = false,
   });
 
   final String name, path, selectedPath;
   final Widget icon;
+  final bool push;
 
   @override
   Widget build(BuildContext context) {
     return LabeledIconButton(
       icon: icon,
       text: name,
-      onPressed: () => context.go(path),
+      onPressed: () => (push ? context.push : context.go).call(path),
       backgroundColor: path == selectedPath
           ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
           : Theme.of(context).colorScheme.background,
