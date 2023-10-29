@@ -87,18 +87,28 @@ class GameDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // convert from utc time to local
         FutureBuilder(
             future: getResultText(),
             builder: (context, snapshot) {
               return AnimatedText(
                 snapshot.data ?? "",
                 style: TextStyle(
-                  fontSize: responsiveValue(context,
-                      mobileValue: 34, desktopValue: 40),
+                  fontSize: responsiveValue(
+                    context,
+                    mobileValue: 34,
+                    desktopValue: 40,
+                  ),
                 ),
               );
             }),
+        Text('Play time: ${formatDuration(game.timePlayed, showSeconds: true)}',
+            style: TextStyle(
+              fontSize: responsiveValue(
+                context,
+                mobileValue: 14,
+                desktopValue: 18,
+              ),
+            )),
         const SizedBox(height: 8),
         Text.rich(TextSpan(children: [
           WidgetSpan(
@@ -120,6 +130,7 @@ class GameDetails extends StatelessWidget {
         const Spacer(),
         Align(
           alignment: Alignment.bottomRight,
+          // convert from utc time to local
           child: Text(format.format(game.createdAt.toLocal())),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class AnimatedText extends StatelessWidget {
   const AnimatedText(this.data, {super.key, this.style});
@@ -9,7 +10,7 @@ class AnimatedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
+      duration: 200.ms,
       transitionBuilder: (child, animation) => FadeTransition(
         opacity: animation,
         child: child,
@@ -19,6 +20,24 @@ class AnimatedText extends StatelessWidget {
         key: ValueKey(data),
         style: style,
       ),
+    );
+  }
+}
+
+class AnimatedTextRich extends StatelessWidget {
+  const AnimatedTextRich(this.textSpan, {super.key});
+
+  final InlineSpan textSpan;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: 200.ms,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+      child: Text.rich(textSpan, key: ValueKey(textSpan.toPlainText())),
     );
   }
 }

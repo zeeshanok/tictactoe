@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
+import 'package:tictactoe/common/utils.dart';
 import 'package:tictactoe/widgets/loading.dart';
 import 'package:tictactoe/models/game.dart';
 import 'package:tictactoe/pages/home/history/history_item.dart';
@@ -12,24 +16,26 @@ class GameHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.background,
-      child: FutureBuilder(
-        future: context.read<GameService>().fetchGamesByCurrentUser(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final games = snapshot.data!;
-            if (games.isEmpty) {
-              return const EmptyGames();
+    return SafeArea(
+      child: Container(
+        color: Theme.of(context).colorScheme.background,
+        child: FutureBuilder(
+          future: context.read<GameService>().fetchGamesByCurrentUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final games = snapshot.data!;
+              if (games.isEmpty) {
+                return const EmptyGames();
+              } else {
+                return HistoryList(games: games);
+              }
             } else {
-              return HistoryList(games: games);
+              return const Center(
+                child: LoadingWidget(),
+              );
             }
-          } else {
-            return const Center(
-              child: LoadingWidget(),
-            );
-          }
-        },
+          },
+        ),
       ),
     );
   }
@@ -40,20 +46,34 @@ class HistoryList extends StatelessWidget {
 
   final List<TicTacToeGameModel> games;
 
+  Duration getDurationPlayed() {
+    return games.map((e) => e.timePlayed).reduce((a, b) => a + b);
+  }
+
   @override
   Widget build(BuildContext context) {
     // smooth scrolling
-    return DynMouseScroll(
-      builder: (context, controller, physics) {
-        return ListView.separated(
-          controller: controller,
-          physics: physics,
-          itemBuilder: (context, index) => HistoryItem(game: games[index]),
-          separatorBuilder: (context, index) => const SizedBox(height: 6),
-          itemCount: games.length,
-        );
-      },
-    ).animate().fadeIn();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Time played: ${formatDuration(getDurationPlayed())}"),
+        const SizedBox(height: 8),
+        Expanded(
+          child: DynMouseScroll(
+            builder: (context, controller, physics) {
+              return ListView.separated(
+                controller: controller,
+                physics: physics,
+                itemBuilder: (context, index) =>
+                    HistoryItem(game: games[index]),
+                separatorBuilder: (context, index) => const SizedBox(height: 6),
+                itemCount: games.length,
+              );
+            },
+          ).animate().fadeIn(),
+        ),
+      ],
+    );
   }
 }
 

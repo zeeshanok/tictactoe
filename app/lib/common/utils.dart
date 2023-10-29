@@ -33,3 +33,29 @@ void globalNotify(String message) {
 extension BoolUtils on bool {
   bool xor(bool b) => (this && !b) || (!this && b);
 }
+
+String plural(int howMany, String noun) {
+  return howMany == 1 ? noun : "${noun}s";
+}
+
+String formatDuration(Duration duration, {bool showSeconds = false}) {
+  final days = duration.inDays;
+  final hours = duration.inHours - days * 24;
+  final minutes = duration.inMinutes - duration.inHours * 60;
+  final seconds = duration.inSeconds - duration.inMinutes * 60;
+
+  final d = plural(days, "day");
+  final h = plural(hours, "hour");
+  final m = plural(minutes, "min");
+
+  final buffer = StringBuffer();
+
+  if (days > 0) buffer.write("$days $d ");
+  if (hours > 0) buffer.write("$hours $h ");
+  if (minutes > 0) buffer.write("$minutes $m ");
+  if (buffer.isEmpty || (seconds >= 0 && showSeconds)) {
+    buffer.write("${seconds}s ");
+  }
+
+  return buffer.toString().trimRight();
+}
