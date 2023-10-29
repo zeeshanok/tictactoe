@@ -56,9 +56,13 @@ class HomeScaffoldWithNav extends StatelessWidget {
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.gamepad_rounded), label: 'Play'),
+              icon: Icon(Icons.gamepad_rounded),
+              label: 'Play',
+            ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.history_rounded), label: 'History')
+              icon: Icon(Icons.bar_chart_rounded),
+              label: 'Stats',
+            )
           ],
           currentIndex: _getIndex(state.fullPath!),
           onTap: (index) => _onTap(context, index),
@@ -75,7 +79,7 @@ class HomeScaffoldWithNav extends StatelessWidget {
         mobileBuilder: buildMobileLayout, desktopBuilder: buildDesktopLayout);
   }
 
-  final Map<String, int> indexMap = {'/': 0, '/history': 1};
+  final Map<String, int> indexMap = {'/': 0, '/stats': 1};
 
   void _onTap(BuildContext context, int index) =>
       context.go({for (final e in indexMap.entries) e.value: e.key}[index]!);
@@ -105,9 +109,9 @@ class NavRail extends StatelessWidget {
           selectedPath: selectedPath,
         ),
         NavItem(
-          name: "History",
-          path: '/history',
-          icon: const Icon(Icons.history),
+          name: "Stats",
+          path: '/stats',
+          icon: const Icon(Icons.bar_chart_rounded),
           selectedPath: selectedPath,
         ),
         const Spacer(),

@@ -7,7 +7,7 @@ import 'package:tictactoe/pages/authenticate/authenticate.dart';
 import 'package:tictactoe/pages/create_user.dart';
 import 'package:tictactoe/pages/home/home_scaffold_with_nav.dart';
 import 'package:tictactoe/pages/home/game_select.dart';
-import 'package:tictactoe/pages/home/history/game_history.dart';
+import 'package:tictactoe/pages/home/stats/stats_page.dart';
 import 'package:tictactoe/pages/home/local_multiplayer/local_multiplayer.dart';
 import 'package:tictactoe/pages/home/online/online.dart';
 import 'package:tictactoe/pages/home/settings/settings.dart';
@@ -100,10 +100,10 @@ GoRouter getRouter() {
             ],
           ),
           GoRoute(
-            path: '/history',
+            path: '/stats',
             parentNavigatorKey: gamesNavKey,
             pageBuilder: (context, state) =>
-                slideUpTransition(state, const GameHistoryPage()),
+                slideUpTransition(state, const StatsPage()),
           ),
         ],
       ),
