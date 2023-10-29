@@ -28,6 +28,7 @@ class GameService extends ChangeNotifier with UsesAuthServiceMixin {
     await dio.post('/', data: game.toMap());
   }
 
+  /// Returns the corresponding user if provided a user id
   Future<User?> _getUserIfId(String playerText) async {
     final id = int.tryParse(playerText);
     if (id == null) return null;

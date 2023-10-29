@@ -13,6 +13,8 @@ class MiniMaxComputerPlayer implements Player {
 
   MiniMaxComputerPlayer({required this.playerType}) : internalName = 'Computer';
 
+  // This doesn't feel as good as an actual minimax algorithm
+  // But I like to think that the computer shouldn't be indestructible
   (int action, int value) minimax({
     required PlayList state,
     int? action,
@@ -64,8 +66,11 @@ class MiniMaxComputerPlayer implements Player {
   Future<Cell> getMove(TicTacToe board) async {
     final result = (await Future.wait([
       compute((state) => minimax(state: state), board.cells),
+      // wait at least 1 second to give the user the feeling that the computer
+      // is "thinking"
       Future.delayed(const Duration(seconds: 1))
     ]))[0] as (int, int);
+
     return Cell.fromIndex(result.$1);
   }
 
@@ -73,7 +78,7 @@ class MiniMaxComputerPlayer implements Player {
   String get turnText => "Computer's turn (${playerType.name})";
 
   @override
-  String get winText => "Computer wins(${playerType.name})";
+  String get winText => "Computer wins (${playerType.name})";
 
   @override
   void dispose() {}

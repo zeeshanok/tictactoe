@@ -60,11 +60,6 @@ class _LocalMultiplayerPageState extends State<LocalMultiplayerPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     closeControllers();
     super.dispose();

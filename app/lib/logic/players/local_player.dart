@@ -22,6 +22,9 @@ class LocalPlayer implements Player {
       : "You win";
 
   final PlayerType playerType;
+
+  /// Type of the game this player is playing in.
+  /// `LocalPlayer`s can play in all the types of games.
   final GameType gameType;
 
   LocalPlayer({

@@ -6,6 +6,7 @@ typedef MoveList = List<Cell>;
 
 int getMoveCount(PlayList cells) => cells.where((c) => c != null).length;
 
+/// Get the type of player whose turn it is
 PlayerType getCurrentPlayerType(cells) =>
     getMoveCount(cells) % 2 == 0 ? PlayerType.X : PlayerType.O;
 
@@ -36,17 +37,17 @@ class TicTacToe extends ChangeNotifier {
   final PlayList cells;
 
   final MoveList moves;
+  int get moveCount => moves.length;
 
   final Player playerX, playerO;
 
   final void Function(TicTacToe game)? onGameEnd;
 
+  /// Stopwatch that starts when the game starts and stops when the game stops.
   final Stopwatch stopwatch;
 
   /// Result of the game. If null the game is still ongoing.
   GameResult? result;
-
-  int get moveCount => moves.length;
 
   PlayerType get currentPlayerType => getCurrentPlayerType(cells);
   Player get currentPlayer =>
@@ -111,6 +112,8 @@ class TicTacToe extends ChangeNotifier {
   Future<void> startGame() async {
     stopwatch.start();
     bool prematureEnd = false;
+
+    // produce moves from players as long as the game is not over
     while (getResult() == null) {
       final move = await (currentPlayerType == PlayerType.X ? playerX : playerO)
           .getMove(this);

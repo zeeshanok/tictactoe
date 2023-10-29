@@ -6,8 +6,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 final _joinedPattern = RegExp(r'^youare(\d+)(x|o)$');
 
+/// Wrapper that help's coordinating the beginning of an online tictactoe game
 class MultiplayerGameManager extends ChangeNotifier {
   final int gameCode;
+
   final WebSocketChannel channel;
 
   PlayerType get currentUserSide => _currentUserSide;
@@ -56,6 +58,8 @@ class MultiplayerGameManager extends ChangeNotifier {
   }
 
   void stopListening() {
+    // called after the job of coordinating the beginning of an online
+    // game is done
     _sub.cancel();
   }
 }

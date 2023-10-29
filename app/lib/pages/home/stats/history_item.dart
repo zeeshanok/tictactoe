@@ -68,6 +68,7 @@ class GameDetails extends StatelessWidget {
   final TicTacToeGameModel game;
 
   Future<GameResult?> getResultAsync() async =>
+      // this task may cause stuttering so we use SchedulerBinding
       await SchedulerBinding.instance.scheduleTask(
         () => getResultFromCells(game.moves.toPlayList()),
         Priority.animation,
@@ -139,7 +140,7 @@ class GameDetails extends StatelessWidget {
         Text.rich(TextSpan(children: [
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
-            child: PlayerNameWithType(
+            child: PlayerChip(
               name: game.playerXName,
               type: PlayerType.X,
             ),
@@ -147,7 +148,7 @@ class GameDetails extends StatelessWidget {
           const TextSpan(text: " vs "),
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
-            child: PlayerNameWithType(
+            child: PlayerChip(
               name: game.playerOName,
               type: PlayerType.O,
             ),
@@ -161,8 +162,8 @@ class GameDetails extends StatelessWidget {
   }
 }
 
-class PlayerNameWithType extends StatelessWidget {
-  const PlayerNameWithType({super.key, required this.name, required this.type});
+class PlayerChip extends StatelessWidget {
+  const PlayerChip({super.key, required this.name, required this.type});
 
   final String name;
   final PlayerType type;

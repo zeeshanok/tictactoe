@@ -12,13 +12,18 @@ extension PlayerTypeUtils on PlayerType {
 }
 
 abstract class Player {
+  /// Name stored in the server's database
   String get internalName;
 
+  /// The text displayed on screen when it is this `Player`'s turn
   String get turnText;
+
+  /// The text displayed on screen when this `Player` wins.
   String get winText;
 
   /// Get player's next move given the current state of the board
   Future<Cell?> getMove(TicTacToe board);
 
+  /// Method thats called when the enclosing `TicTacToe` game calls `dispose`
   void dispose();
 }

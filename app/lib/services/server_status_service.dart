@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:tictactoe/common/consts.dart';
 import 'package:tictactoe/common/utils.dart';
 
+const serverAliveCheckInterval = 13;
+
 class ServerStatusService extends ChangeNotifier {
   bool get isAlive => _isAlive ?? false;
   bool? _isAlive;
@@ -33,7 +35,7 @@ class ServerStatusService extends ChangeNotifier {
 
   void initialise() {
     runCheck();
-    Timer.periodic(13.seconds, (timer) async {
+    Timer.periodic(serverAliveCheckInterval.seconds, (timer) async {
       runCheck();
     });
   }

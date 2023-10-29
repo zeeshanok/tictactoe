@@ -1,6 +1,7 @@
 import 'package:tictactoe/logic/tictactoe.dart';
 import 'package:tictactoe/models/user.dart';
 
+/// Model used to represent a previous tictactoe game
 class TicTacToeGameModel {
   final int id;
   final MoveList moves;

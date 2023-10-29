@@ -77,27 +77,6 @@ class _OnlinePageState extends State<OnlinePage> {
     manager.stopListening();
   }
 
-  void doCreateGame() async {
-    final result = await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const CreateGameDialog(),
-    );
-    if (result is MultiplayerGameManager) {
-      createGame(result);
-    }
-  }
-
-  void doJoinGame() async {
-    final result = await showDialog(
-      context: context,
-      builder: (context) => const JoinGameDialog(),
-    );
-    if (result is MultiplayerGameManager) {
-      createGame(result);
-    }
-  }
-
   void Function() createGameWrapper(Widget child) => () async {
         final result = await showDialog(
           context: context,
@@ -108,7 +87,7 @@ class _OnlinePageState extends State<OnlinePage> {
         }
       };
 
-  Widget buildPreGame(BuildContext context) {
+  Widget buildPreGameMenu(BuildContext context) {
     return JoinOrCreateGame(
       onCreate: createGameWrapper(const CreateGameDialog()),
       onJoin: createGameWrapper(const JoinGameDialog()),
@@ -123,7 +102,7 @@ class _OnlinePageState extends State<OnlinePage> {
             child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: game == null
-              ? buildPreGame(context)
+              ? buildPreGameMenu(context)
               : TicTacToeGame(
                   game: game!,
                   onPlay: (cell) {

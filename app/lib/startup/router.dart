@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/common/transitions.dart';
 import 'package:tictactoe/common/utils.dart';
-import 'package:tictactoe/pages/authenticate/authenticate.dart';
+import 'package:tictactoe/pages/authenticate.dart';
 import 'package:tictactoe/pages/create_user.dart';
 import 'package:tictactoe/pages/home/home_scaffold_with_nav.dart';
 import 'package:tictactoe/pages/home/game_select.dart';

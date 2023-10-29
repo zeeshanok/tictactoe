@@ -21,6 +21,7 @@ class CombineChangeNotifiers extends ChangeNotifier {
   }
 }
 
+// Key used to show snackbars globally
 final snackbarKey = GlobalKey<ScaffoldMessengerState>();
 
 void globalNotify(String message) {

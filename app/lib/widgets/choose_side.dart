@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tictactoe/logic/players/player.dart';
 import 'package:tictactoe/widgets/tictactoe_widget.dart';
 
+/// Widget that lets the user choose X or O
 class ChooseSide extends StatelessWidget {
   const ChooseSide({super.key, required this.onChoose});
 

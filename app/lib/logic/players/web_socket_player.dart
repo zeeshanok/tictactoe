@@ -10,6 +10,7 @@ class WebSocketPlayer implements Player {
 
   String get displayName => _user.username ?? "unknown username";
 
+  /// For `WebSocketPlayer`s this value is the user id of the player.
   @override
   String get internalName => _user.id.toString();
 

@@ -28,6 +28,7 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
         .joinGame(int.parse(_controller.text))
         .then((manager) => manager.ready.then((success) {
               if (success) {
+                // ready to start playing online
                 Navigator.of(context, rootNavigator: true).pop(manager);
               } else {
                 globalNotify("Game not found");
@@ -90,11 +91,7 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
                     textAlign: TextAlign.center,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (value) {
-                      if (_validate(value)) {
-                        setState(() => _enabled = true);
-                      } else {
-                        setState(() => _enabled = false);
-                      }
+                      setState(() => _enabled = _validate(value));
                     },
                     onFieldSubmitted: (value) {
                       if (_validate(value)) {
