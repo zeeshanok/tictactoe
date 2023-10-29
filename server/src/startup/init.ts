@@ -1,6 +1,7 @@
+import 'dotenv/config';
 import { Express } from 'express';
 
-const port = 8090;
+const port = Number.parseInt(process.env.PORT as string);
 
 function setupApp(app: Express) {
     app.set('trust proxy', true);

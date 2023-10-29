@@ -7,7 +7,7 @@ import { useTypeOrm } from "../database/typeorm";
 
 const controller = Router();
 
-const wss = new WebSocketServer({ port: 8091 });
+const wss = new WebSocketServer({ port: Number.parseInt(process.env.WEBSOCKET_PORT as string) });
 
 type UserIdWebSocketPair = { userId: number; ws: WebSocket; };
 type GameClients = { [gameCode: number]: { x?: UserIdWebSocketPair; o?: UserIdWebSocketPair; }; };
