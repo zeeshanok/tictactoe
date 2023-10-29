@@ -81,6 +81,7 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
                 Expanded(
                   child: TextFormField(
                     controller: _controller,
+                    autofocus: true,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       labelText: "Code",
