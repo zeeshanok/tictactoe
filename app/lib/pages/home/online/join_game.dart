@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:tictactoe/common/utils.dart';
@@ -49,33 +50,41 @@ class _JoinGameDialogState extends State<JoinGameDialog> {
             const Text("Enter game code", style: TextStyle(fontSize: 30)),
             const SizedBox(height: 16),
             if (defaultTargetPlatform == TargetPlatform.android)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: SizedBox(
-                  height: 220,
-                  child: ClipRRect(
-                    borderRadius: defaultBorderRadius,
-                    child: MobileScanner(
-                      controller: _scannerController,
-                      onDetect: (capture) {
-                        for (final barcode in capture.barcodes) {
-                          if (barcode.rawValue != null) {
-                            final match = RegExp(r'^ttt-(\d{6})$')
-                                .firstMatch(barcode.rawValue!);
-                            final digits = match?.group(1);
-                            if (digits != null) {
-                              _controller.text = digits;
-                              onSubmit();
-                            }
-                          }
-                        }
-                      },
-                      placeholderBuilder: (context, _) =>
-                          const Center(child: Icon(Icons.camera_alt_rounded)),
-                    ),
-                  ),
-                ),
-              ),
+              FutureBuilder(
+                  future: Permission.camera.request(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData && snapshot.data!.isGranted
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: SizedBox(
+                              height: 220,
+                              child: ClipRRect(
+                                borderRadius: defaultBorderRadius,
+                                child: MobileScanner(
+                                  controller: _scannerController,
+                                  onDetect: (capture) {
+                                    for (final barcode in capture.barcodes) {
+                                      if (barcode.rawValue != null) {
+                                        final match = RegExp(r'^ttt-(\d{6})$')
+                                            .firstMatch(barcode.rawValue!);
+                                        final digits = match?.group(1);
+                                        if (digits != null) {
+                                          _controller.text = digits;
+                                          onSubmit();
+                                        }
+                                      }
+                                    }
+                                  },
+                                  placeholderBuilder: (context, _) =>
+                                      const Center(
+                                          child:
+                                              Icon(Icons.camera_alt_rounded)),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container();
+                  }),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
