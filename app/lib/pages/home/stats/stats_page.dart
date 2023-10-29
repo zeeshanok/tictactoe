@@ -75,16 +75,17 @@ class _HistoryListState extends State<HistoryList> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StatsHeader(
-          showGameCount: games.length,
-          totalGameCount: widget.games.length,
-          durationPlayed: getDurationPlayed(),
-          filters: filters,
-          onFiltersChanged: (f) => setState(() {
-            filters = f;
-            applyFilters(f);
-          }),
-        ),
+        if (widget.games.isNotEmpty)
+          StatsHeader(
+            showGameCount: games.length,
+            totalGameCount: widget.games.length,
+            durationPlayed: getDurationPlayed(),
+            filters: filters,
+            onFiltersChanged: (f) => setState(() {
+              filters = f;
+              applyFilters(f);
+            }),
+          ),
         const SizedBox(height: 8),
         Expanded(
           child: games.isEmpty
