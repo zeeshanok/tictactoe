@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Star } from './star.entity';
 
 @Entity()
 export class User {
@@ -17,4 +18,6 @@ export class User {
     @Column({ nullable: true })
     profileUrl!: string;
 
+    @OneToMany(() => Star, star => star.user)
+    stars!: Star[];
 }

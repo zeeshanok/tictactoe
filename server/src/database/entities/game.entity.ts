@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Star } from "./star.entity";
 
 export type GameType = 'computer' | 'local-multiplayer' | 'online';
 
@@ -36,6 +37,6 @@ export class Game {
     @Column("text", { nullable: true })
     playerO!: string | null;
 
-    @Column({ default: false })
-    starred!: boolean;
+    @OneToMany(() => Star, star => star.game)
+    stars!: Star[];
 }
